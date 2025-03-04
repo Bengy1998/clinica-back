@@ -30,7 +30,7 @@ class DefaultDataSeeder extends Seeder
             'ruc' => '1234567890123',
             'correo' => 'admin@admin.com',
             'telefono' => '0987654321',
-            'dominio' => 'menu-back.test',
+            'dominio' => '127.0.0.1',
             'estado' => true
         ]);
 
