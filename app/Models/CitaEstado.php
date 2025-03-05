@@ -15,4 +15,10 @@ class CitaEstado extends Model
          'nombre',
          'estado'
      ];
+
+     public function cita()
+    {
+        return $this->belongsToMany(Cita::class);
+    }
+
 }

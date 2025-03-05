@@ -11,6 +11,11 @@ class TipoDocumentoIdentidad extends Model
     protected $fillable = [
         'nombre',
         'codigo_corto',
-        'estadp'
+        'estado'
     ];
+
+    public function pacientes()
+    {
+        return $this->hasMany(Paciente::class);
+    }
 }

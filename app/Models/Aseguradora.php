@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Cita;
 use Illuminate\Database\Eloquent\Model;
 
 class Aseguradora extends Model
@@ -16,4 +17,9 @@ class Aseguradora extends Model
         'empresa_id',
         'created_at',
     ];
+
+    public function citas()
+    {
+        return $this->hasMany(Cita::class);
+    }
 }

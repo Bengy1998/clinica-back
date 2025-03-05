@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PacienteAseguradora extends Model
 {
-    protected $table = 'alergias'; // Nombre de la tabla en la BD
+    protected $table = 'pacientes_aseguradoras'; // Nombre de la tabla en la BD
 
     protected $fillable = [
         'paciente_id',
@@ -14,6 +14,19 @@ class PacienteAseguradora extends Model
         'numero_poliza'
 
     ];
+
+    public function paciente()
+    {
+        return $this->belongsTo(Paciente::class);
+    }
+
+    public function aseguradora()
+    {
+        return $this->belongsTo(Aseguradora::class);
+    }
+
+
+
 
 
 

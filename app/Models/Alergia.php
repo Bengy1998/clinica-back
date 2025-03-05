@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Atencion;
 use Illuminate\Database\Eloquent\Model;
 
 class Alergia extends Model
@@ -13,4 +14,12 @@ class Alergia extends Model
         'descripcion', // Descripción de la alergia
         'tipo', // Tipo de alergia (ej: alimento, medicamento, ambiental)
     ];
+
+    public function atencion()
+    {
+        return $this->belongsToMany(Atencion::class, 'atenciones_alergias', 'alergia_id', 'atencion_id');
+    }
+
+
+
 }

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Odontograma extends Model
 {
-    protected $table = 'alergias'; // Nombre de la tabla en la BD
+    protected $table = 'odontograma'; // Nombre de la tabla en la BD
 
     protected $fillable = [
         'paciente_id',
@@ -14,4 +14,19 @@ class Odontograma extends Model
         'estado_id',
         'observaciones'
     ];
+
+    public function paciente()
+    {
+        return $this->belongsTo(Paciente::class);
+    }
+
+    public function estado()
+    {
+        return $this->belongsTo(EstadoOdontograma::class);
+    }
+
+    public function diente()
+    {
+        return $this->belongsTo(Diente::class);
+    }
 }

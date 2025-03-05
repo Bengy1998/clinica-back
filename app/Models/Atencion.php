@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Alergia;
+use App\Models\Cita;
+use App\Models\Diagnostico;
 use Illuminate\Database\Eloquent\Model;
 
 class Atencion extends Model
@@ -14,7 +17,23 @@ class Atencion extends Model
         'hora_atencion',
         'diagnostico_id',
         'tratamiento',
-        'observaciones',
-        'created_at'
+        'observaciones'
     ];
+
+    public function cita()
+    {
+        return $this->belongsTo(Cita::class);
+    }
+
+    public function diagnosticos()
+    {
+        return $this->belongsToMany(Diagnostico::class, 'atencion_diagnostico');
+    }
+
+    public function alergias()
+    {
+        return $this->belongsToMany(Alergia::class, 'atenciones_alergias', 'atencion_id', 'alergia_id');
+    }
+
+
 }

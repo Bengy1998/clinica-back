@@ -12,4 +12,9 @@ class EstadoOdontograma extends Model
         'nombre',
         'descripcion'
     ];
+
+    public function odontogramas()
+    {
+        return $this->hasMany(Odontograma::class);
+    }
 }
