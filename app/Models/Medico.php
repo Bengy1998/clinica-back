@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Models\Especialidad;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Medico extends Model
 {
     protected $table = 'medico'; // Nombre de la tabla en la BD
-
+    use HasFactory; //  Agregar esto
     protected $fillable = [
         'nombre',
         'apellido_paterno',

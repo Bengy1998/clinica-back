@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Paciente extends Model
 {
+    use HasFactory; //  Agregar esto
     protected $table = 'pacientes'; // Nombre de la tabla en la BD
 
     protected $fillable = [
@@ -14,7 +16,7 @@ class Paciente extends Model
         'apellido_paterno',
         'apellido_materno',
         'tipo_documento_id',
-        'numero_documento_identidad',
+        'tipo_documento_identidad_id',
         'telefono',
         'email',
         'fecha_nacimiento'
@@ -26,7 +28,7 @@ class Paciente extends Model
     }
 
     public function tipoDocumento()
-    {
-        return $this->belongsTo(TipoDocumentoIdentidad::class, 'tipo_documento_id');
-    }
+{
+    return $this->belongsTo(TipoDocumentoIdentidad::class, 'tipo_documento_identidad_id');
+}
 }

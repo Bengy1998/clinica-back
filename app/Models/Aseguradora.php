@@ -4,11 +4,11 @@ namespace App\Models;
 
 use App\Models\Cita;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Aseguradora extends Model
 {
     protected $table = 'aseguradoras'; // Nombre de la tabla en la BD
-
+    use HasFactory; //  Agregar esto
     protected $fillable = [
         'nombre', // Nombre de la alergia
         'ruc', // Descripción de la alergia

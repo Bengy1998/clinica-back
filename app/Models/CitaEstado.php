@@ -9,7 +9,7 @@ class CitaEstado extends Model
      /** @use HasFactory<\Database\Factories\CitaFactory> */
 
 
-     protected $table = 'estado_cita'; // Nombre de la tabla en la BD
+     protected $table = 'cita_estado'; // Nombre de la tabla en la BD
 
      protected $fillable = [
          'nombre',
