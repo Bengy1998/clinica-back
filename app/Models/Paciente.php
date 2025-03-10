@@ -15,7 +15,8 @@ class Paciente extends Model
         'nombres',
         'apellido_paterno',
         'apellido_materno',
-        'tipo_documento_id',
+
+        'numero_documento_identidad',
         'tipo_documento_identidad_id',
         'telefono',
         'email',

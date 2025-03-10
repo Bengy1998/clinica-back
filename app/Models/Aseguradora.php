@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Aseguradora extends Model
 {
-    protected $table = 'aseguradoras'; // Nombre de la tabla en la BD
     use HasFactory; //  Agregar esto
+    protected $table = 'aseguradoras'; // Nombre de la tabla en la BD
+
     protected $fillable = [
         'nombre', // Nombre de la alergia
         'ruc', // Descripción de la alergia
@@ -16,6 +17,7 @@ class Aseguradora extends Model
         'email',
         'empresa_id',
         'created_at',
+        'updated_at'
     ];
 
     public function citas()
