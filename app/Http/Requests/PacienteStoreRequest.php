@@ -67,4 +67,18 @@ class PacienteStoreRequest extends FormRequest
             'fecha_nacimiento.date' => 'La fecha de nacimiento debe ser una fecha válida.',
         ];
     }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Errores de validación',
+                    'errors' => $validator->errors()
+                ],
+                400
+            )
+        );
+    }
 }

@@ -21,14 +21,18 @@ class JwtMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         try {
-
             $user = JWTAuth::parseToken()->authenticate();
-            
+
+            $routeName = $request->route()->getName();
+
+            // Permitir rutas con ".select" sin verificar permisos, pero requiere autenticación
+            if (str_contains($routeName, '.select')) {
+                return $next($request);
+            }
+
             $permissions = Cache::remember("permissions_{$user->id}", 1440, function () use ($user) {
                 return $user->rol->permisos->pluck('slug')->unique()->toArray();
             });
-
-            $routeName = $request->route()->getName();
 
             if (!in_array($routeName, $permissions)) {
                 return $this->responseErrorJson('Accion denegada', [], 403);

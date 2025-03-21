@@ -50,41 +50,7 @@ class UserAuthController extends Controller
 
     public function logout()
     {
-        Auth::logout();
+        JWTAuth::invalidate(JWTAuth::getToken());
         return $this->responseJsonMessageOk('Sesión cerrada correctamente.');
-    }
-
-
-    public function redirectToGoogle(Request $request)
-    {
-        Log::info('Redirecting to Google', ['request' => $request->all(), 'header' => $request->getHost(), 'header' => $request->header('Origin')]);
-        return response()->json([
-            'url' => Socialite::driver('google')->stateless()->redirect()->getTargetUrl()
-        ]);
-       // return Socialite::driver('google')->redirect();
-    }
-
-    public function handleGoogleCallback()
-    {
-        //try {
-            $googleUser = Socialite::driver('google')->stateless()->user();
-
-            // // Buscar usuario en la base de datos o crearlo
-            $user = User::updateOrCreate(
-                ['google_id' => $googleUser->getId()],
-                [
-                    'name' => $googleUser->getName(),
-                    'password' => Hash::make(12512414124142142), // Generar contraseña aleatoria
-                    'email' => $googleUser->getEmail(),
-                ]
-            );
-
-            // Generar token JWT
-            $token = JWTAuth::fromUser($user);
-
-            return redirect()->to("http://localhost:4200/login?token=$token");
-       /*  } catch (\Exception $e) {
-            return response()->json(['error' => 'No se pudo autenticar con Google'], 401);
-        } */
     }
 }

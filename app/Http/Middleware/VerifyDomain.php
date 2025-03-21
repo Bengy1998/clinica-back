@@ -22,10 +22,10 @@ class VerifyDomain
     public function handle(Request $request, Closure $next): Response
     {
         // Obtener el dominio de la solicitud
-        $domain = $request->header('Origin');
+        $domain = $request->getHost();
         //$origin = $request->header('Origin');
         //Log::info("Origin: " . ($origin ?? 'no definido'));
-        Log::info($domain);
+       
         // Buscar la empresa por dominio
         $empresa = Empresa::where([
             'dominio' =>  $domain,
