@@ -24,20 +24,19 @@ class PacienteStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'empresa_id' => 'required|integer|exists:empresas,id',
+           // 'empresa_id' => 'required|integer|exists:empresas,id',
             'nombres' => 'required|string|max:255',
             'apellido_paterno' => 'required|string|max:255',
             'apellido_materno' => 'required|string|max:255',
-
             'tipo_documento_identidad_id' => 'required|integer|exists:tipo_documento_identidad,id',
-            'numero_documento_identidad' => 'required|string|max:20',
+            'numero_documento_identidad' => 'required|string|max:20|unique:pacientes,numero_documento_identidad,NULL,id,empresa_id,' . $this->input('empresa_id'),
             'telefono' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
             'fecha_nacimiento' => 'required|date',
         ];
     }
 
-     public function messages(): array
+    public function messages(): array
     {
         return [
             'empresa_id.required' => 'El ID de la empresa es obligatorio.',
@@ -68,6 +67,4 @@ class PacienteStoreRequest extends FormRequest
             'fecha_nacimiento.date' => 'La fecha de nacimiento debe ser una fecha válida.',
         ];
     }
-
-
 }

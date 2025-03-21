@@ -22,7 +22,7 @@ class VerifyDomain
     public function handle(Request $request, Closure $next): Response
     {
         // Obtener el dominio de la solicitud
-        $domain = $request->getHost();
+        $domain = $request->header('Origin');
         //$origin = $request->header('Origin');
         //Log::info("Origin: " . ($origin ?? 'no definido'));
         Log::info($domain);

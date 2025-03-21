@@ -10,7 +10,5 @@ class Empresa extends Model
     use HasFactory;
 
     // Campos que se pueden asignar masivamente
-    protected $fillable = ['nombre', 'ruc', 'email', 'telefono', 'estado'];
-
-
+    protected $fillable = ['nombre', 'ruc', 'dominio', 'correo', 'telefono', 'estado'];
 }

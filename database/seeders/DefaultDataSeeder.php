@@ -18,13 +18,6 @@ class DefaultDataSeeder extends Seeder
     public function run(): void
     {
 
-        $plan = Plan::create([
-            'nombre' => 'Plan mensual',
-            'precio' => 0,
-            'descripcion' => 'Plan mensual',
-            'tipo_plan' => 1
-        ]);
-        // Crear una empresa por defecto
         $empresa = Empresa::create([
             'nombre' => 'Empresa Por Defecto',
             'ruc' => '1234567890123',
@@ -33,13 +26,6 @@ class DefaultDataSeeder extends Seeder
             'dominio' => '127.0.0.1',
             'estado' => true
         ]);
-
-        $empresa->planes()->attach($plan->id, [
-            'fecha_inicio' => now(),
-            'fecha_fin' => now()->addMonth(),
-            'estado' => true
-        ]);
-
         // Crear un rol por defecto
         $rol = Role::create([
             'nombre' => 'Administrador',
@@ -60,3 +46,4 @@ class DefaultDataSeeder extends Seeder
         $this->command->info('Datos por defecto creados exitosamente.');
     }
 }
+//php artisan db:seed --class=DefaultDataSeeder

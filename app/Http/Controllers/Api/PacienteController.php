@@ -24,22 +24,8 @@ class PacienteController extends Controller
         try {
 
             $pacientes = Paciente::when($request->filled('nombre_completo'), function ($query) use ($request) {
-                $nombreCompleto = $request->input('nombre_completo');
-                $query->where(function ($query) use ($nombreCompleto) {
-                    $query->where('nombres', 'like', '%' . $nombreCompleto . '%')
-                        ->orWhere('apellido_paterno', 'like', '%' . $nombreCompleto . '%')
-                        ->orWhere('apellido_materno', 'like', '%' . $nombreCompleto . '%');
-                });
+                $query->whereRaw("CONCAT(nombres, ' ', apellido_paterno, ' ', apellido_materno) LIKE ?", ['%' . $request->nombre_completo . '%']);
             })
-                ->when($request->filled('nombres'), function ($query) use ($request) {
-                    $query->where('nombres', 'like', '%' . $request->input('nombres') . '%');
-                })
-                ->when($request->filled('apellido_paterno'), function ($query) use ($request) {
-                    $query->where('apellido_paterno', 'like', '%' . $request->input('apellido_paterno') . '%');
-                })
-                ->when($request->filled('apellido_materno'), function ($query) use ($request) {
-                    $query->where('apellido_materno', 'like', '%' . $request->input('apellido_materno') . '%');
-                })
                 ->when($request->filled('tipo_documento_identidad_id'), function ($query) use ($request) {
                     $query->where('tipo_documento_identidad_id', $request->input('tipo_documento_identidad_id'));
                 })
