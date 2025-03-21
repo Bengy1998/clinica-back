@@ -20,7 +20,6 @@ class PacienteResource extends JsonResource
             'nombres'                  => $this->nombres ?? '',
             'apellido_paterno'         => $this->apellido_paterno ?? '',
             'apellido_materno'         => $this->apellido_materno ?? '',
-            'tipo_documento_id'        => $this->tipo_documento_id ?? '',
             'nombre_completo'          => $this->apellido_paterno.' '.$this->apellido_materno.' ,'.$this->nombres,
             'tipo_documento_identidad_id' => $this->tipo_documento_identidad_id ?? '',
             'telefono'                 => $this->telefono ?? '',
