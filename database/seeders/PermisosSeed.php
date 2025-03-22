@@ -54,21 +54,11 @@ class PermisosSeed extends Seeder
         foreach ($aseguradoras_p as $permiso) {
             Permiso::create($permiso);
         }
-
-        // Asociar permisos al primer rol
+        
         $rol = Role::first();
+
         if ($rol) {
             $rol->permisos()->sync(Permiso::pluck('id')->toArray());
-        }
-
-        // Asociar permisos de pacientes al primer rol
-        if ($rol) {
-            $rol->permisos()->syncWithoutDetaching(Permiso::pluck('id')->toArray());
-        }
-
-        // Asociar permisos de aseguradoras al primer rol
-        if ($rol) {
-            $rol->permisos()->syncWithoutDetaching(Permiso::pluck('id')->toArray());
         }
     }
 }

@@ -34,11 +34,11 @@ class DatabaseSeeder extends Seeder
             DientesSeeder::class,
             EspecialidadesSeeder::class,
             MotivoCitaSeeder::class,
+            DefaultDataSeeder::class,
             PermisosSeed::class,
             TipoDocumentoIdentidadSeeder::class,
             TratamientoTiposSeeder::class,
 
-            DefaultDataSeeder::class,
         ]);
 
         //Empresa::factory()->count(10)->create();

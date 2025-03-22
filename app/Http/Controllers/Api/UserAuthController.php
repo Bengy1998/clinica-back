@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
+use App\Http\Resources\PermisosUserResource;
 use App\Models\User;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
@@ -30,7 +31,7 @@ class UserAuthController extends Controller
 
         // Obtener el usuario autenticado
         $user = Auth::user();
-        $user->load('rol');
+        $user->load('rol.permisos');
 
         // Verificar que el usuario pertenezca a la empresa correcta
         if ($user->empresa_id !== $request->empresa_id) {
@@ -39,15 +40,18 @@ class UserAuthController extends Controller
             return $this->responseErrorJson('Credenciales no válidas.', [], Response::HTTP_UNAUTHORIZED);
         }
 
-        // Devolver el token JWT
+        // Obtener los permisos del rol del usuario
+        $permisos = $user->rol->permisos;
+
+        // Devolver el token JWT y los permisos
         return $this->responseJson([
             'user' => $user,
             'token' => $token,
             'token_type' => 'bearer',
             'expires_in' => JWTAuth::factory()->getTTL() * 60, // Duración en segundos
+            'permisos' => PermisosUserResource::collection($permisos),
         ]);
     }
-
     public function logout()
     {
         JWTAuth::invalidate(JWTAuth::getToken());
