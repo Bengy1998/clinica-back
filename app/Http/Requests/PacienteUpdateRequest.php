@@ -69,5 +69,18 @@ class PacienteUpdateRequest extends FormRequest
         ];
     }
 
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Errores de validación',
+                    'errors' => $validator->errors()
+                ],
+                400
+            )
+        );
+    }
 
 }

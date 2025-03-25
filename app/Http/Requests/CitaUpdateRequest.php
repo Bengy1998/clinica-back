@@ -24,12 +24,14 @@ class CitaUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nombre' => 'sometimes|string|max:255',
-            'paciente_id' => 'sometimes|integer|exists:pacientes,id',
-            'aseguradora_id' => 'sometimes|integer|exists:aseguradoras,id',
-            'especialidad_id' => 'sometimes|integer|exists:especialidades,id',
-            'medico_id' => 'sometimes|integer|exists:medicos,id',
-            'fecha' => 'sometimes|date',
+            'nombre' => 'required|string|max:255',
+            'paciente_id' => 'required|integer|exists:pacientes,id',
+            'aseguradora_id' => 'required|integer',
+            'especialidad_id' => 'required|integer',
+            'medico_id' => 'required|integer',
+            'fecha' => 'required|date',
+            'hora' => 'required|string',
+            'estado_id' => 'required|integer',
         ];
     }
 
@@ -41,23 +43,38 @@ class CitaUpdateRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'nombre.sometimes' => 'El nombre es obligatorio si está presente.',
+            'nombre.required' => 'El nombre es obligatorio.',
             'nombre.string' => 'El nombre debe ser una cadena de texto.',
             'nombre.max' => 'El nombre no puede tener más de 255 caracteres.',
-            'paciente_id.sometimes' => 'El ID del paciente es obligatorio si está presente.',
+            'paciente_id.required' => 'El ID del paciente es obligatorio.',
             'paciente_id.integer' => 'El ID del paciente debe ser un número entero.',
-            'paciente_id.exists' => 'El paciente seleccionado no existe.',
-            'aseguradora_id.sometimes' => 'El ID de la aseguradora es obligatorio si está presente.',
+            'aseguradora_id.required' => 'El ID de la aseguradora es obligatorio.',
             'aseguradora_id.integer' => 'El ID de la aseguradora debe ser un número entero.',
-            'aseguradora_id.exists' => 'La aseguradora seleccionada no existe.',
-            'especialidad_id.sometimes' => 'El ID de la especialidad es obligatorio si está presente.',
+            'especialidad_id.required' => 'El ID de la especialidad es obligatorio.',
             'especialidad_id.integer' => 'El ID de la especialidad debe ser un número entero.',
-            'especialidad_id.exists' => 'La especialidad seleccionada no existe.',
-            'medico_id.sometimes' => 'El ID del médico es obligatorio si está presente.',
+            'medico_id.required' => 'El ID del médico es obligatorio.',
             'medico_id.integer' => 'El ID del médico debe ser un número entero.',
             'medico_id.exists' => 'El médico seleccionado no existe.',
-            'fecha.sometimes' => 'La fecha es obligatoria si está presente.',
+            'fecha.required' => 'La fecha es obligatoria.',
             'fecha.date' => 'La fecha debe ser una fecha válida.',
+            'hora.required' => 'La hora es obligatoria.',
+            'hora.string' => 'La hora debe ser una hora válida.',
+            'estado_id.required' => 'El estado_id es obligatoria.',
+            'estado_id.string' => 'El estado_id debe ser un numero entero.',
         ];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Errores de validación',
+                    'errors' => $validator->errors()
+                ],
+                400
+            )
+        );
     }
 }

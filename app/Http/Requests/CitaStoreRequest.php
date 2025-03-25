@@ -30,6 +30,8 @@ class CitaStoreRequest extends FormRequest
             'especialidad_id' => 'required|integer',
             'medico_id' => 'required|integer',
             'fecha' => 'required|date',
+            'hora' => 'required|string',
+            'estado_id' => 'required|integer',
         ];
     }
 
@@ -55,6 +57,24 @@ class CitaStoreRequest extends FormRequest
             'medico_id.exists' => 'El médico seleccionado no existe.',
             'fecha.required' => 'La fecha es obligatoria.',
             'fecha.date' => 'La fecha debe ser una fecha válida.',
+            'hora.required' => 'La hora es obligatoria.',
+            'hora.string' => 'La hora debe ser una hora válida.',
+            'estado_id.required' => 'El estado_id es obligatoria.',
+            'estado_id.string' => 'El estado_id debe ser un numero entero.',
         ];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Errores de validación',
+                    'errors' => $validator->errors()
+                ],
+                400
+            )
+        );
     }
 }

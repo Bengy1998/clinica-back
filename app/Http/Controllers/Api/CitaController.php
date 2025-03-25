@@ -26,9 +26,17 @@ class CitaController extends Controller
 
         try {
 
-            $citas = Cita::when($request->filled('nombre'), function ($query) use ($request) {
-                $query->where('nombre', 'like', '%' . $request->input('nombre') . '%');
-            })
+            $citas = Cita::with(['paciente', 'medico', 'especialidad', 'aseguradora'])
+                ->when($request->filled('paciente_nombre'), function ($query) use ($request) {
+                    $query->whereHas('paciente', function ($query) use ($request) {
+                        $query->where('nombre', 'like', '%' . $request->input('paciente_nombre') . '%');
+                    });
+                })
+                ->when($request->filled('numero_documento_identidad'), function ($query) use ($request) {
+                    $query->whereHas('paciente', function ($query) use ($request) {
+                        $query->where('numero_documento_identidad', 'like', '%' . $request->input('numero_documento_identidad') . '%');
+                    });
+                })
                 ->when($request->filled('paciente_id'), function ($query) use ($request) {
                     $query->where('paciente_id', $request->input('paciente_id'));
                 })
@@ -74,7 +82,19 @@ class CitaController extends Controller
     public function store(CitaStoreRequest $request)
     {
         try {
-            $cita = Cita::create($request->validated());
+            $data = $request->only([
+                'nombre',
+                'paciente_id',
+                'aseguradora_id',
+                'especialidad_id',
+                'medico_id',
+                'fecha',
+                'hora',
+                'empresa_id',
+                'estado_id'
+            ]);
+
+            $cita = Cita::create($data);
             return $this->responseJson(new CitaResource($cita), Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             return $this->responseErrorJson($th->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -99,7 +119,19 @@ class CitaController extends Controller
     public function update(CitaUpdateRequest $request, Cita $cita)
     {
         try {
-            $cita->update($request->validated());
+
+            $data = $request->only([
+                'nombre',
+                'paciente_id',
+                'aseguradora_id',
+                'especialidad_id',
+                'medico_id',
+                'fecha',
+                'hora',
+                'empresa_id',
+                'estado_id'
+            ]);
+            $cita->update($data);
             return $this->responseJson(new CitaResource($cita), Response::HTTP_OK);
         } catch (\Throwable $th) {
             return $this->responseErrorJson($th->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -117,10 +149,9 @@ class CitaController extends Controller
         } catch (\Throwable $th) {
             return $this->responseErrorJson($th->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
     }
 
-    public function CitaEstado()
+    public function EstadoCita()
     {
         try {
             $list_estados_cita = CitaEstado::all();

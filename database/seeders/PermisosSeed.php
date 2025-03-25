@@ -15,7 +15,7 @@ class PermisosSeed extends Seeder
      * Run the database seeds.
      */
     public function run(): void
-    {
+    {/*
         // Crear permisos para el módulo de empresa
         $empresa = Modulo::create(['nombre' => 'Empresa']);
         $empresa_p = [
@@ -54,7 +54,21 @@ class PermisosSeed extends Seeder
         foreach ($aseguradoras_p as $permiso) {
             Permiso::create($permiso);
         }
-        
+
+
+
+        // Permisos para el módulo de Citas
+        $citas = Modulo::create(['nombre' => 'Citas']);
+        $citas_p = [
+            ['nombre' => 'Ver Citas', 'slug' => 'ver-citas', 'descripcion' => 'Permiso para ver citas', 'modulo_id' => $citas->id],
+            ['nombre' => 'Crear Citas', 'slug' => 'crear-citas', 'descripcion' => 'Permiso para crear citas', 'modulo_id' => $citas->id],
+            ['nombre' => 'Editar Citas', 'slug' => 'editar-citas', 'descripcion' => 'Permiso para editar citas', 'modulo_id' => $citas->id],
+            ['nombre' => 'Eliminar Citas', 'slug' => 'eliminar-citas', 'descripcion' => 'Permiso para eliminar citas', 'modulo_id' => $citas->id],
+        ];
+        Permiso::insert($citas_p);
+        */
+
+
         $rol = Role::first();
 
         if ($rol) {
