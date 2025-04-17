@@ -21,9 +21,9 @@ return new class extends Migration
                 ->nullable() // Puede ser nulo
                 ->constrained('empresas') // Relación con la tabla empresas
                 ->onDelete('set null'); // Si se elimina la empresa, se establece como nulo
-            $table->foreignId('tipo_documento_id')
+            $table->foreignId('tipo_documento_identidad_id')
                 ->nullable()
-                ->constrained('tipo_documentos')
+                ->constrained('tipo_documento_identidad')
                 ->onDelete('set null');
 
             $table->foreignId('role_id')
@@ -43,7 +43,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             // Eliminar restricciones de clave foránea primero
-            $table->dropForeign(['tipo_documento_id']);
+            $table->dropForeign(['tipo_documento_identidad_id']);
             $table->dropForeign(['role_id']);
             $table->dropForeign(['empresa_id']); // Debe eliminarse antes de eliminar el índice
 
@@ -56,7 +56,7 @@ return new class extends Migration
             $table->dropColumn('email');
 
             // Eliminar las demás columnas
-            $table->dropColumn(['estado', 'tipo_documento_id', 'role_id', 'numero_documento']);
+            $table->dropColumn(['estado', 'tipo_documento_identidad_id', 'role_id', 'numero_documento']);
         });
     }
 };

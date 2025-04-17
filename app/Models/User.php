@@ -55,7 +55,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function tipo_documento()
     {
-        return $this->belongsTo(TipoDocumento::class, 'tipo_documento_id');
+        return $this->belongsTo(TipoDocumentoIdentidad::class, 'tipo_documento_identidad_id');
     }
 
     /**

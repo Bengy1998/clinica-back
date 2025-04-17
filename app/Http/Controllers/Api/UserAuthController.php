@@ -26,7 +26,7 @@ class UserAuthController extends Controller
 
         // Intentar autenticar al usuario
         if (!$token = JWTAuth::attempt($credentials)) {
-            return $this->responseErrorJson('Credenciales no válidas.', [], Response::HTTP_UNAUTHORIZED);
+            return $this->responseErrorJson('Credenciales no válidas.', [], Response::HTTP_FORBIDDEN); // Cambiado a 403
         }
 
         // Obtener el usuario autenticado
@@ -37,7 +37,7 @@ class UserAuthController extends Controller
         if ($user->empresa_id !== $request->empresa_id) {
             // Cerrar la sesión del usuario si no pertenece a la empresa
             Auth::logout();
-            return $this->responseErrorJson('Credenciales no válidas.', [], Response::HTTP_UNAUTHORIZED);
+            return $this->responseErrorJson('Credenciales no válidas.', [], Response::HTTP_FORBIDDEN); // Cambiado a 403
         }
 
         // Obtener los permisos del rol del usuario
@@ -52,6 +52,7 @@ class UserAuthController extends Controller
             'permisos' => PermisosUserResource::collection($permisos),
         ]);
     }
+
     public function logout()
     {
         JWTAuth::invalidate(JWTAuth::getToken());

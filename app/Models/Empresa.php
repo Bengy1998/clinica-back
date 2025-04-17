@@ -11,4 +11,9 @@ class Empresa extends Model
 
     // Campos que se pueden asignar masivamente
     protected $fillable = ['nombre', 'ruc', 'dominio', 'correo', 'telefono', 'estado'];
+
+    public function modulos()
+    {
+        return $this->belongsToMany(Modulo::class, 'empresa_modulo');
+    }
 }

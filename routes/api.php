@@ -13,6 +13,7 @@ Route::middleware('verify.domain')->group(function () {
     Route::post('login', [UserAuthController::class, 'login']);
 });
 
+// La ruta logout no pasa por el middleware de permisos
 Route::middleware('verify.domain')->post('logout', [UserAuthController::class, 'logout']);
 // Las demás rutas requieren tanto 'verify.domain' como el middleware 'api' (que maneja la verificación del token)
 Route::middleware(['verify.domain', 'jwt'])->group(function () {

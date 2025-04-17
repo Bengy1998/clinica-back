@@ -22,6 +22,8 @@ class PacienteFactory extends Factory
 
     public function definition(): array
     {
+        $this->faker->locale = 'es_PE'; // Configurar Faker para Perú
+
         return [
             'empresa_id' => Empresa::inRandomOrder()->first()->id ?? Empresa::factory(),
             'nombres' => $this->faker->firstName(),
@@ -29,8 +31,8 @@ class PacienteFactory extends Factory
             'apellido_materno' => $this->faker->lastName(),
             'tipo_documento_identidad_id' => TipoDocumentoIdentidad::inRandomOrder()->first()->id ?? TipoDocumentoIdentidad::factory(),
             'numero_documento_identidad' => $this->faker->unique()->numerify('###########'),
-            'telefono' => $this->faker->optional()->phoneNumber(),
-            'email' => $this->faker->optional()->email(), // ✅ Corrección
+            'telefono' => $this->faker->optional()->numerify('9########'), // Número de celular típico en Perú
+            'email' => $this->faker->optional()->email(),
             'fecha_nacimiento' => $this->faker->date(),
             'created_at' => now(),
             'updated_at' => now(),

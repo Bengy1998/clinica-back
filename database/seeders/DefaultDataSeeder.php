@@ -39,7 +39,7 @@ class DefaultDataSeeder extends Seeder
             'empresa_id' => $empresa->id,
             'role_id' => $rol->id,
             'numero_documento' => '1234567890',
-            'tipo_documento_id' => 1, // Asumiendo que el ID 1 es "Cédula de Identidad"
+            'tipo_documento_identidad_id' => 1, // Asumiendo que el ID 1 es "Cédula de Identidad"
             'estado' => true
         ]);
 
