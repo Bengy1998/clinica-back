@@ -15,18 +15,17 @@ class PacienteResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'                       => $this->id ?? '',
-            'empresa_id'               => $this->empresa_id ?? '',
-            'nombres'                  => $this->nombres ?? '',
-            'apellido_paterno'         => $this->apellido_paterno ?? '',
-            'apellido_materno'         => $this->apellido_materno ?? '',
-            'nombre_completo'          => $this->apellido_paterno.' '.$this->apellido_materno.' ,'.$this->nombres,
-            'tipo_documento_identidad_id' => $this->tipo_documento_identidad_id ?? '',
-            'telefono'                 => $this->telefono ?? '',
-            'email'                    => $this->email ?? '',
-            'fecha_nacimiento'         => $this->fecha_nacimiento ?? '',
-            'created_at'               => $this->created_at ?? '',
-            'updated_at'               => $this->updated_at ?? ''
+            'id'                            => $this->id ?? '',
+            'nombres'                       => $this->nombres ?? '',
+            'apellido_paterno'              => $this->apellido_paterno ?? '',
+            'apellido_materno'              => $this->apellido_materno ?? '',
+            'nombre_completo'               => $this->nombre_completo,
+            'tipo_documento_identidad_id'   => $this->tipo_documento_identidad_id ?? '',
+            'telefono'                      => $this->telefono ?? '',
+            'email'                         => $this->email ?? '',
+            'fecha_nacimiento'              => $this->fecha_nacimiento ?? '',
+            'tipo_documento_identidad'      => $this->tipo_documento?->codigo_corto ?? '',
+            'numero_documento_identidad'    => $this->numero_documento_identidad ?? '',
         ];
     }
 }
