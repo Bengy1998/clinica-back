@@ -20,7 +20,6 @@ class AseguradoraController extends Controller
      */
     public function index(Request $request)
     {
-        //dd($request->input('nombre'));
 
         try {
 

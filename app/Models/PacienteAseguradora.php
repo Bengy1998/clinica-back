@@ -25,9 +25,4 @@ class PacienteAseguradora extends Model
         return $this->belongsTo(Aseguradora::class);
     }
 
-
-
-
-
-
 }
