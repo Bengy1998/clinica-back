@@ -23,9 +23,6 @@ class VerifyDomain
     {
         // Obtener el dominio de la solicitud
         $domain = $request->getHost();
-        //$origin = $request->header('Origin');
-        //Log::info("Origin: " . ($origin ?? 'no definido'));
-       
         // Buscar la empresa por dominio
         $empresa = Empresa::where([
             'dominio' =>  $domain,

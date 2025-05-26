@@ -23,7 +23,7 @@ class DefaultDataSeeder extends Seeder
             'ruc' => '1234567890123',
             'correo' => 'admin@admin.com',
             'telefono' => '0987654321',
-            'dominio' => '127.0.0.1',
+            'dominio' => 'localhost',
             'estado' => true
         ]);
         // Crear un rol por defecto
