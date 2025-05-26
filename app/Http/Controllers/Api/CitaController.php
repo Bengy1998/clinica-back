@@ -7,10 +7,7 @@ use App\Http\Requests\CitaStoreRequest;
 use App\Http\Requests\CitaUpdateRequest;
 use App\Http\Resources\CitaEstadoResource;
 use App\Http\Resources\CitaResource;
-use App\Http\Resources\MotivoCitaResource;
 use App\Models\Cita;
-use App\Models\CitaEstado;
-use App\Models\MotivoCita;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -151,27 +148,4 @@ class CitaController extends Controller
         }
     }
 
-    public function EstadoCita()
-    {
-        try {
-            $list_estados_cita = CitaEstado::all();
-            return $this->responseJson([
-                'data' => CitaEstadoResource::collection($list_estados_cita)
-            ]);
-        } catch (\Throwable $th) {
-            return $this->responseErrorJson($th->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    public function MotivoCita()
-    {
-        try {
-            $list_motivos_cita = MotivoCita::all();
-            return $this->responseJson([
-                'data' => MotivoCitaResource::collection($list_motivos_cita)
-            ]);
-        } catch (\Throwable $th) {
-            return $this->responseErrorJson($th->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
 }

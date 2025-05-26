@@ -3,9 +3,18 @@
 use App\Http\Controllers\Api\AseguradoraController;
 use App\Http\Controllers\Api\CitaController;
 use App\Http\Controllers\Api\EmpresaController;
+use App\Http\Controllers\Api\EspecialidadController;
+use App\Http\Controllers\Api\EstadoCitaController;
+use App\Http\Controllers\Api\MotivoCitaController;
 use App\Http\Controllers\Api\PacienteController;
+use App\Http\Controllers\Api\TipoDocumentoIdentidadController;
 use App\Http\Controllers\Api\UserAuthController;
+use App\Models\Especialidad;
+use App\Models\TipoDocumentoIdentidad;
 use Illuminate\Support\Facades\Route;
+
+
+
 
 
 // Asegurarse de que la ruta login no se vea afectada por middleware que intente parsear el token
@@ -56,9 +65,10 @@ Route::middleware(['verify.domain', 'jwt'])->group(function () {
 
 });
 // Ruta para obtener los motivos de cita fuera del grupo 'citas'
-Route::get('/motivos', [CitaController::class, 'MotivoCita'])->name('motivo-cita');
-Route::get('/estados', [CitaController::class, 'EstadoCita'])->name('estado-cita');
-
+Route::get('/motivos', [MotivoCitaController::class, 'MotivoCita'])->name('motivo-cita');
+Route::get('/estados', [EstadoCitaController::class, 'EstadoCita'])->name('estado-cita');
+Route::get('/tipoDocumento', [TipoDocumentoIdentidadController::class, 'TipoDocumento'])->name('tipo-documento');
+Route::get('/especialidades', [EspecialidadController::class, 'getEspecialidad'])->name('especialidad');
 
 
 Route::get('/x', function () {

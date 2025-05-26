@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PacienteStoreRequest;
 use App\Http\Requests\PacienteUpdateRequest;
 use App\Http\Resources\PacienteResource;
+use App\Http\Resources\TipoDocumentoIdentidadResource;
 use App\Models\Paciente;
+use App\Models\TipoDocumentoIdentidad;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -71,8 +73,20 @@ class PacienteController extends Controller
     public function store(PacienteStoreRequest $request)
     {
         try {
-            $pacientes = Paciente::create($request->all());
-            return $this->responseJson(new PacienteResource($pacientes), Response::HTTP_CREATED);
+            $data = $request->only([
+                'empresa_id',
+                'nombres',
+                'apellido_paterno',
+                'apellido_materno',
+                'numero_documento_identidad',
+                'tipo_documento_identidad_id',
+                'telefono',
+                'email',
+                'fecha_nacimiento'
+            ]);
+
+            $paciente = Paciente::create($data);
+            return $this->responseJson(new PacienteResource($paciente), Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             return $this->responseErrorJson($th->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -97,7 +111,18 @@ class PacienteController extends Controller
     public function update(PacienteUpdateRequest $request, Paciente $paciente)
     {
         try {
-            $paciente->update($request->all());
+            $data = $request->only([
+                'empresa_id',
+                'nombres',
+                'apellido_paterno',
+                'apellido_materno',
+                'numero_documento_identidad',
+                'tipo_documento_identidad_id',
+                'telefono',
+                'email',
+                'fecha_nacimiento'
+            ]);
+            $paciente->update($data);
             return $this->responseJson(new PacienteResource($paciente));
         } catch (\Throwable $th) {
             return $this->responseErrorJson($th->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -112,6 +137,18 @@ class PacienteController extends Controller
         try {
             $paciente->delete();
             return $this->responseJson([], Response::HTTP_NO_CONTENT);
+        } catch (\Throwable $th) {
+            return $this->responseErrorJson($th->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function TipoDocumento()
+    {
+        try {
+            $list_motivos_cita = TipoDocumentoIdentidad::all();
+            return $this->responseJson([
+                'data' => TipoDocumentoIdentidadResource::collection($list_motivos_cita)
+            ]);
         } catch (\Throwable $th) {
             return $this->responseErrorJson($th->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }

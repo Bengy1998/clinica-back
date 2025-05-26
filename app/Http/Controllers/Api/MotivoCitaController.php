@@ -3,30 +3,26 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\EspecialidadResource;
-use App\Models\Especialidad;
-use Illuminate\Http\Request;
+use App\Http\Resources\MotivoCitaResource;
+use App\Models\MotivoCita;
 use App\Traits\ResponseTrait;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class EspecialidadController extends Controller
+class MotivoCitaController extends Controller
 {
     use ResponseTrait;
-    /**
-     * Display a listing of the resource.
-     */
-    public function getEspecialidad()
+
+
+    public function MotivoCita()
     {
-
         try {
-            $citas = Especialidad::all();
-
+            $list_motivos_cita = MotivoCita::all();
             return $this->responseJson([
-                'data' => EspecialidadResource::collection($citas),
+                'data' => MotivoCitaResource::collection($list_motivos_cita)
             ]);
         } catch (\Throwable $th) {
             return $this->responseErrorJson($th->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
 }
