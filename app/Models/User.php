@@ -55,7 +55,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function tipo_documento()
     {
-        return $this->belongsTo(TipoDocumento::class, 'tipo_documento_id');
+        return $this->belongsTo(TipoDocumentoIdentidad::class, 'tipo_documento_identidad_id');
     }
 
     /**
@@ -69,7 +69,7 @@ class User extends Authenticatable implements JWTSubject
     // Obtener el identificador para JWT
     public function getJWTIdentifier()
     {
-        return $this->getKey();
+        return $this->getKey(); // Devuelve el ID del usuario
     }
 
     // Obtener los claims personalizados para JWT

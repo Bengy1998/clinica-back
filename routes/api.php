@@ -6,12 +6,21 @@ use App\Http\Controllers\Api\EmpresaController;
 use App\Http\Controllers\Api\EspecialidadController;
 use App\Http\Controllers\Api\EstadoCitaController;
 use App\Http\Controllers\Api\MotivoCitaController;
+use App\Http\Controllers\Api\EspecialidadController;
+use App\Http\Controllers\Api\EstadoCitaController;
+use App\Http\Controllers\Api\MotivoCitaController;
 use App\Http\Controllers\Api\PacienteController;
+use App\Http\Controllers\Api\TipoDocumentoIdentidadController;
 use App\Http\Controllers\Api\TipoDocumentoIdentidadController;
 use App\Http\Controllers\Api\UserAuthController;
 use App\Models\Especialidad;
 use App\Models\TipoDocumentoIdentidad;
+use App\Models\Especialidad;
+use App\Models\TipoDocumentoIdentidad;
 use Illuminate\Support\Facades\Route;
+
+
+
 
 
 
@@ -22,9 +31,11 @@ Route::middleware('verify.domain')->group(function () {
     Route::post('login', [UserAuthController::class, 'login']);
 });
 
-Route::middleware('verify.domain')->post('logout', [UserAuthController::class, 'logout']);
+// La ruta logout no pasa por el middleware de permisos
 // Las demás rutas requieren tanto 'verify.domain' como el middleware 'api' (que maneja la verificación del token)
 Route::middleware(['verify.domain', 'jwt'])->group(function () {
+
+    Route::middleware('verify.domain')->post('logout', [UserAuthController::class, 'logout'])->name('logout');
 
     Route::controller(EmpresaController::class)->prefix('empresas')->group(function () {
         Route::get('/', 'index')->name('ver-empresa');
@@ -57,14 +68,22 @@ Route::middleware(['verify.domain', 'jwt'])->group(function () {
         Route::put('/{cita}', 'update')->name('editar-citas');
         Route::delete('/{cita}', 'destroy')->name('eliminar-citas'); // Ruta para eliminar
 
-
     });
 
+    Route::controller(TipoDocumentoIdentidadController::class)->prefix('tipo-documento-identidad')->group(function () {
+        Route::get('/', 'index')->name('tipo-documento-identidad.select');
+    });
 
-
+    // Ruta para obtener los motivos de cita fuera del grupo 'citas'
+    Route::get('/motivos', [CitaController::class, 'MotivoCita'])->name('motivo-cita');
+    Route::get('/estados', [CitaController::class, 'EstadoCita'])->name('estado-cita');
 
 });
 // Ruta para obtener los motivos de cita fuera del grupo 'citas'
+Route::get('/motivos', [MotivoCitaController::class, 'MotivoCita'])->name('motivo-cita');
+Route::get('/estados', [EstadoCitaController::class, 'EstadoCita'])->name('estado-cita');
+Route::get('/tipoDocumento', [TipoDocumentoIdentidadController::class, 'TipoDocumento'])->name('tipo-documento');
+Route::get('/especialidades', [EspecialidadController::class, 'getEspecialidad'])->name('especialidad');
 Route::get('/motivos', [MotivoCitaController::class, 'MotivoCita'])->name('motivo-cita');
 Route::get('/estados', [EstadoCitaController::class, 'EstadoCita'])->name('estado-cita');
 Route::get('/tipoDocumento', [TipoDocumentoIdentidadController::class, 'TipoDocumento'])->name('tipo-documento');

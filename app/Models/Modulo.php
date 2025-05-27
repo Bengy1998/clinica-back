@@ -17,4 +17,9 @@ class Modulo extends Model
     {
         return $this->hasMany(Permiso::class);
     }
+
+    public function empresas()
+    {
+        return $this->belongsToMany(Empresa::class, 'empresa_modulo');
+    }
 }

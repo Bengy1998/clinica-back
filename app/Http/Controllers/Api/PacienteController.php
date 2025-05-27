@@ -22,26 +22,23 @@ class PacienteController extends Controller
 
     public function index(Request $request)
     {
-
         try {
-
             $pacientes = Paciente::when($request->filled('nombre_completo'), function ($query) use ($request) {
                 $query->whereRaw("CONCAT(nombres, ' ', apellido_paterno, ' ', apellido_materno) LIKE ?", ['%' . $request->nombre_completo . '%']);
             })
-                ->when($request->filled('tipo_documento_identidad_id'), function ($query) use ($request) {
-                    $query->where('tipo_documento_identidad_id', $request->input('tipo_documento_identidad_id'));
+                ->when($request->filled('search'), function ($query) use ($request) {
+                    $search = $request->input('search');
+                    $query->where(function ($query) use ($search) {
+                        $query->whereRaw("CONCAT(nombres, ' ', apellido_paterno, ' ', apellido_materno) LIKE ?", ['%' . $search . '%'])
+                            ->orWhere('numero_documento_identidad', 'LIKE', '%' . $search . '%');
+                    });
                 })
-                ->when($request->filled('numero_documento_identidad'), function ($query) use ($request) {
-                    $query->where('numero_documento_identidad', 'like', '%' . $request->input('numero_documento_identidad') . '%');
-                })
-                ->when($request->filled('telefono'), function ($query) use ($request) {
-                    $query->where('telefono', 'like', '%' . $request->input('telefono') . '%');
-                })
-                ->when($request->filled('correo'), function ($query) use ($request) {
-                    $query->where('correo', 'like', '%' . $request->input('correo') . '%');
-                })
-                ->when($request->filled('fecha_nacimiento'), function ($query) use ($request) {
-                    $query->whereDate('fecha_nacimiento', $request->input('fecha_nacimiento'));
+                ->when($request->filled('sort_field') && $request->filled('sort_order'), function ($query) use ($request) {
+                    $sortField = $request->input('sort_field');
+                    $sortOrder = $request->input('sort_order');
+                    $query->orderBy($sortField, $sortOrder);
+                }, function ($query) {
+                    $query->orderBy('id', 'desc');
                 })
                 ->paginate(10);
 
