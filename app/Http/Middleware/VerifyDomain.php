@@ -31,7 +31,7 @@ class VerifyDomain
 
         // Si no existe la empresa, devolver un error
         if (!$empresa) {
-            return $this->responseErrorJson('Empresa desactivada, por favor comunicate por un administrador', [], Response::HTTP_FORBIDDEN);
+            return $this->responseErrorJson('Empresa desactivada, por favor comunicate por un administrador'. '/ domain:'.$domain, [], Response::HTTP_FORBIDDEN);
         }
         // Guardar el ID de la empresa en la solicitud para usarlo más tarde
         $request->merge(['empresa_id' => $empresa->id]);

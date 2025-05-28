@@ -14,8 +14,9 @@ class EmpresaFactory extends Factory
         return [
             'nombre' => $this->faker->company,
             'ruc' => $this->faker->unique()->numerify('###########'),
-            'email' => $this->faker->unique()->safeEmail,
+            'correo' => $this->faker->unique()->safeEmail,
             'telefono' => $this->faker->phoneNumber,
+            'dominio' =>  $this->faker->unique()->numerify('###########')
         ];
     }
 }

@@ -12,7 +12,7 @@ class Permiso extends Model
 
     public function roles()
     {
-        return $this->belongsToMany(Role::class, 'permiso_rol');
+        return $this->belongsToMany(Role::class, 'permiso_rol', 'permiso_id', 'role_id');
     }
 
     public function modulo()

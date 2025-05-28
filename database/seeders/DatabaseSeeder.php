@@ -29,23 +29,23 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
         $this->call([
-            //CitaEstadoSeeder::class,
-            //ClienteSeeder::class,
-            //DientesSeeder::class,
-            //EspecialidadesSeeder::class,
-            //MotivoCitaSeeder::class,
+            CitaEstadoSeeder::class,
+            ClienteSeeder::class,
+            DientesSeeder::class,
+            EspecialidadesSeeder::class,
+            MotivoCitaSeeder::class,
             TipoDocumentoIdentidadSeeder::class,
             DefaultDataSeeder::class,
             PermisosSeed::class,
-            //TratamientoTiposSeeder::class,
+            TratamientoTiposSeeder::class,
 
         ]);
 
         Paciente::factory()->count(20)->create();
-        //Empresa::factory()->count(10)->create();
-        //Aseguradora::factory()->count(10)->create();
-       // Medico::factory()->count(10)->create();
-        //Medicamento::factory()->count(15)->create();
-        //Cita::factory()->count(30)->create();
+        Empresa::factory()->count(10)->create();
+        Aseguradora::factory()->count(10)->create();
+        Medico::factory()->count(10)->create();
+        Medicamento::factory()->count(15)->create();
+        Cita::factory()->count(30)->create();
     }
 }

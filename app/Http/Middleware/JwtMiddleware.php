@@ -38,7 +38,7 @@ class JwtMiddleware
             });
 
             if (!in_array($routeName, $permissions)) {
-                return $this->responseErrorJson('Accion denegada', [], 403);
+                return $this->responseErrorJson('Accion denegada'. $routeName . "     / ". $permissions, [], 403);
             }
         } catch (JWTException $e) {
             return $this->responseErrorJson('Token invalido', [], 401);

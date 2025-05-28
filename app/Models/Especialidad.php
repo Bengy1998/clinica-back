@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Cita;
 use App\Models\Medico;
 use Illuminate\Database\Eloquent\Model;
 
 class Especialidad extends Model
 {
+
+    use HasFactory;
     protected $table = 'especialidades'; // Nombre de la tabla en la BD
 
     protected $fillable = [

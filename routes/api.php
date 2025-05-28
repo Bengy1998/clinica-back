@@ -6,20 +6,12 @@ use App\Http\Controllers\Api\EmpresaController;
 use App\Http\Controllers\Api\EspecialidadController;
 use App\Http\Controllers\Api\EstadoCitaController;
 use App\Http\Controllers\Api\MotivoCitaController;
-use App\Http\Controllers\Api\EspecialidadController;
-use App\Http\Controllers\Api\EstadoCitaController;
-use App\Http\Controllers\Api\MotivoCitaController;
 use App\Http\Controllers\Api\PacienteController;
-use App\Http\Controllers\Api\TipoDocumentoIdentidadController;
 use App\Http\Controllers\Api\TipoDocumentoIdentidadController;
 use App\Http\Controllers\Api\UserAuthController;
 use App\Models\Especialidad;
 use App\Models\TipoDocumentoIdentidad;
-use App\Models\Especialidad;
-use App\Models\TipoDocumentoIdentidad;
 use Illuminate\Support\Facades\Route;
-
-
 
 
 

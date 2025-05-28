@@ -1,0 +1,13 @@
+includes:
+    - ./vendor/nunomaduro/larastan/extension.neon
+
+parameters:
+    level: max
+    paths:
+        - app
+        - tests
+    ignoreErrors:
+        - '#Call to an undefined method App\\Models\\.*#'
+    scanDirectories:
+        - database/factories
+        - database/seeders
