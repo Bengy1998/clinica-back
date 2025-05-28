@@ -22,7 +22,7 @@ class CitaControllerTest extends TestCase
     {
         parent::setUp();
 
-        // Ejecutar migraciones y seeders para el entorno de pruebas
+        // Ejecutar migraciones y seeders para el entorno de pruebasx
         $this->artisan('migrate:fresh', ['--env' => 'testing']);
         $this->artisan('db:seed', ['--env' => 'testing']);
     }
@@ -73,7 +73,7 @@ class CitaControllerTest extends TestCase
 
 
         $response = $this->withHeaders([
-            'Authorization' => "Bearer ", // Usar el token para autenticar la solicitud
+            'Authorizationxxxx' => "Bearer ", // Usar el token para autenticar la solicitud, se esta enviando mal el token
         ])->getJson('/api/citas');
 
         $response->assertStatus(200);
@@ -158,7 +158,7 @@ class CitaControllerTest extends TestCase
         $response->assertStatus(201);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Test('Listado de Citas RED, se envia pocos datos en el request')]
     public function creacion_cita_red()
     {
         $token = $this->authenticateUser(); // Autenticar al usuario y obtener el token
