@@ -34,6 +34,15 @@ trait ResponseTrait
         ], $code);
     }
 
+    public function responseServerError($message, $code = Response::HTTP_INTERNAL_SERVER_ERROR)
+    {
+        return response()->json([
+            'success' => false,
+            'message' => $message,
+            'code' => $code
+        ], $code);
+    }
+
     public function responseFormatInvalid()
     {
         return response()->json([

@@ -15,9 +15,7 @@ use Illuminate\Http\Response;
 class AseguradoraController extends Controller
 {
     use ResponseTrait;
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index(Request $request)
     {
 
@@ -56,55 +54,45 @@ class AseguradoraController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     * http://127.0.0.1:8000/api/aseguradoras/10
-     */
+
     public function update(AseguradoraUpdateRequest $request, Aseguradora $aseguradora)
     {
         try {
             $aseguradora->update($request->all());
             return $this->responseJson(new AseguradoraResource($aseguradora));
         } catch (\Throwable $th) {
-            return $this->responseErrorJson($th->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->responseServerError($th->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Aseguradora $aseguradoras)
     {
         try {
             return $this->responseJson(new AseguradoraResource($aseguradoras));
         } catch (\Throwable $th) {
-            return $this->responseErrorJson($th->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->responseServerError($th->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+
     public function store(AseguradoraStoreRequest $request)
     {
         try {
             $aseguradoras = Aseguradora::create($request->all());
             return $this->responseJson(new AseguradoraResource($aseguradoras), Response::HTTP_CREATED);
         } catch (\Throwable $th) {
-            return $this->responseErrorJson($th->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->responseServerError($th->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy(Aseguradora $aseguradora)
     {
         try {
             $aseguradora->delete();
             return $this->responseJson(null, Response::HTTP_NO_CONTENT);
         } catch (\Throwable $th) {
-            return $this->responseErrorJson($th->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->responseServerError($th->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }
