@@ -10,6 +10,7 @@ class Medico extends Model
 {
     protected $table = 'medico'; // Nombre de la tabla en la BD
     use HasFactory; //  Agregar esto
+    
     protected $fillable = [
         'nombre',
         'apellido_paterno',
@@ -18,6 +19,11 @@ class Medico extends Model
         'numero_documento_identidad',
         'usuario_id'
     ];
+
+    /**
+     * Atributos que deben ser añadidos a la representación del array/JSON del modelo.
+     */
+    protected $appends = ['nombre_completo'];
 
     public function especialidades()
     {
@@ -31,6 +37,14 @@ class Medico extends Model
 
     public function tipo_documento(){
         return $this->belongsTo(TipoDocumentoIdentidad::class, 'tipo_documento_identidad_id');
+    }
+
+    /**
+     * Accessor para obtener el nombre completo del médico
+     */
+    public function getNombreCompletoAttribute()
+    {
+        return trim($this->nombre . ' ' . $this->apellido_paterno . ' ' . $this->apellido_materno);
     }
 
 }

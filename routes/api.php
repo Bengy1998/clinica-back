@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AseguradoraController;
 use App\Http\Controllers\Api\CitaController;
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\EmpresaController;
 use App\Http\Controllers\Api\EspecialidadController;
 use App\Http\Controllers\Api\EstadoCitaController;
@@ -29,6 +30,12 @@ Route::middleware('verify.domain')->group(function () {
 Route::middleware(['verify.domain', 'jwt'])->group(function () {
 
     Route::middleware('verify.domain')->post('logout', [UserAuthController::class, 'logout'])->name('logout');
+
+    // Rutas del Dashboard
+    Route::controller(DashboardController::class)->prefix('dashboard')->group(function () {
+        Route::get('/estadisticas', 'estadisticas')->name('dashboard.estadisticas.dashboard');
+        Route::get('/citas-del-dia', 'citasDelDia')->name('dashboard.citas-del-dia.dashboard');
+    });
 
     Route::controller(EmpresaController::class)->prefix('empresas')->group(function () {
         Route::get('/', 'index')->name('ver-empresa');

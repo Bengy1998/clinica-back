@@ -21,7 +21,6 @@ class JwtMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        Log::info("message2");
 
         try {
             $user = JWTAuth::parseToken()->authenticate();
@@ -29,7 +28,7 @@ class JwtMiddleware
             $routeName = $request->route()->getName();
 
             // Permitir rutas con ".select" sin verificar permisos, pero requiere autenticación
-            if (str_contains($routeName, '.select') || $routeName === 'logout') {
+            if (str_contains($routeName, '.select') || $routeName === 'logout' || str_contains($routeName, '.dashboard')) {
                 return $next($request);
             }
 

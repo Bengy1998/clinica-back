@@ -107,7 +107,8 @@ class CitaController extends Controller
     public function show(Cita $cita)
     {
         try {
-            return $this->responseJson(new CitaResource($cita));
+            $cita->load(['paciente', 'medico', 'especialidad', 'aseguradora', 'estado', 'motivo']);
+            return $this->responseJson($cita);
         } catch (\Throwable $th) {
             return $this->responseErrorJson($th->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }

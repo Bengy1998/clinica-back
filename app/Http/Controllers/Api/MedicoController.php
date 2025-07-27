@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\MedicoResource;
 use App\Models\Medico;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
@@ -28,16 +29,7 @@ class MedicoController extends Controller
                 });
             })->limit(20)->get();
 
-            // Formatear la respuesta para el select
-            $medicos_formatted = $list_medicos->map(function ($medico) {
-                return [
-                    'id' => $medico->id,
-                    'nombre_completo' => trim($medico->nombre . ' ' . $medico->apellido_paterno . ' ' . $medico->apellido_materno),
-                    'numero_documento_identidad' => $medico->numero_documento_identidad
-                ];
-            });
-
-            return $this->responseJson($medicos_formatted);
+            return $this->responseJson(MedicoResource::collection($list_medicos));
         } catch (\Throwable $th) {
             return $this->responseErrorJson($th->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }

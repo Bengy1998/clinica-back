@@ -24,14 +24,12 @@ class CitaUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nombre' => 'required|string|max:255',
             'paciente_id' => 'required|integer|exists:pacientes,id',
             'aseguradora_id' => 'required|integer',
             'especialidad_id' => 'required|integer',
             'medico_id' => 'required|integer',
             'fecha' => 'required|date',
             'hora' => 'required|string',
-            'estado_id' => 'required|integer',
         ];
     }
 
