@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Medicamento extends Model
 {
-    protected $table = 'Medicamentos'; // Nombre de la tabla en la BD
+    protected $table = 'medicamentos'; // Nombre de la tabla en la BD
     use HasFactory; //  Agregar esto
     protected $fillable = [
         'nombre',
