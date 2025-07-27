@@ -46,6 +46,6 @@ class DatabaseSeeder extends Seeder
         Aseguradora::factory()->count(10)->create();
         Medico::factory()->count(10)->create();
         Medicamento::factory()->count(15)->create();
-        Cita::factory()->count(30)->create();
+        //Cita::factory()->count(30)->create();
     }
 }
