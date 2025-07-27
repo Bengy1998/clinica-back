@@ -30,6 +30,7 @@ class CitaStoreRequest extends FormRequest
             'medico_id' => 'required|integer',
             'fecha' => 'required|date',
             'hora' => 'required|string',
+            'hora_fin' => 'required|string',
         ];
     }
 
@@ -57,6 +58,8 @@ class CitaStoreRequest extends FormRequest
             'fecha.date' => 'La fecha debe ser una fecha válida.',
             'hora.required' => 'La hora es obligatoria.',
             'hora.string' => 'La hora debe ser una hora válida.',
+            'hora_fin.required' => 'La hora de fin es obligatoria.',
+            'hora_fin.string' => 'La hora de fin debe ser una hora válida.',
             'estado_id.required' => 'El estado_id es obligatoria.',
             'estado_id.string' => 'El estado_id debe ser un numero entero.',
         ];

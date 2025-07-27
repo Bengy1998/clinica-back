@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CitaEstadoUpdateRequest;
 use App\Http\Requests\CitaStoreRequest;
 use App\Http\Requests\CitaUpdateRequest;
 use App\Http\Resources\CitaCalendarioResource;
@@ -88,6 +89,9 @@ class CitaController extends Controller
                 'fecha',
                 'hora',
                 'empresa_id',
+                'detalle',
+                'hora_fin',
+                'motivo_cita_id'
             ]);
 
             $cita = Cita::create($data);
@@ -117,7 +121,6 @@ class CitaController extends Controller
         try {
 
             $data = $request->only([
-                'nombre',
                 'paciente_id',
                 'aseguradora_id',
                 'especialidad_id',
@@ -125,7 +128,9 @@ class CitaController extends Controller
                 'fecha',
                 'hora',
                 'empresa_id',
-                'estado_id'
+                'detalle',
+                'hora_fin',
+                'motivo_cita_id'
             ]);
             $cita->update($data);
             return $this->responseJson(new CitaResource($cita), Response::HTTP_OK);
@@ -177,6 +182,28 @@ class CitaController extends Controller
                 ->get();
             
             return $this->responseJson(CitaCalendarioResource::collection($citas));
+        } catch (\Throwable $th) {
+            return $this->responseErrorJson($th->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Actualizar el estado de una cita
+     */
+    public function actualizarEstado(CitaEstadoUpdateRequest $request, $id)
+    {
+        try {
+            // Buscar la cita
+            $cita = Cita::findOrFail($id);
+            
+            // Actualizar solo el estado
+            $cita->update([
+                'estado_id' => $request->input('estado_id')
+            ]);
+
+            return $this->responseJson([
+                'message' => 'Estado de la cita actualizado exitosamente',
+            ], Response::HTTP_OK);
         } catch (\Throwable $th) {
             return $this->responseErrorJson($th->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }

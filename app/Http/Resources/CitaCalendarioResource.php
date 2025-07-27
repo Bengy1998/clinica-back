@@ -24,13 +24,17 @@ class CitaCalendarioResource extends JsonResource
 
         // Formatear fechas para el calendario
         $fechaHora = $this->fecha . 'T' . $this->hora;
+        $fechaHoraFin = $this->fecha . 'T' . $this->hora_fin;
 
         return [
             'id' => $this->id,
             'title' => $title,
             'start' => $fechaHora,
+            'end' => $fechaHoraFin,
             'fecha' => $this->fecha,
             'hora' => date('g:i A', strtotime($this->hora)),
+            'hora_fin' => $this->hora_fin ? date('g:i A', strtotime($this->hora_fin)) : '',
+            'detalle' => $this->detalle ?? '',
             'especialidad' => $this->especialidad ? $this->especialidad->nombre : '',
             'medico' => $this->medico ? $nombreMedico : '',
             'estado' => $this->estado ? $this->estado->nombre : '',

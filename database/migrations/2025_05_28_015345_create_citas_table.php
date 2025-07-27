@@ -20,6 +20,8 @@ return new class extends Migration
             $table->foreignId('especialidad_id')->nullable()->constrained('especialidades')->onDelete('set null');
             $table->date('fecha');
             $table->time('hora');
+            $table->text('detalle')->nullable();
+            $table->time('hora_fin')->nullable();
             $table->foreignId('estado_id')->constrained('cita_estado')->onDelete('cascade');
             $table->foreignId('motivo_cita_id')->nullable()->constrained('motivo_cita')->onDelete('set null');
             $table->timestamps();

@@ -16,7 +16,7 @@ class Cita extends Model
     /** @use HasFactory<\Database\Factories\CitaFactory> */
     use HasFactory;
 
-    protected $table = 'Citas'; // Nombre de la tabla en la BD
+    protected $table = 'citas';
 
     protected $fillable = [
         'empresa_id',
@@ -27,6 +27,8 @@ class Cita extends Model
         'motivo_cita_id',
         'fecha',
         'hora',
+        'detalle',
+        'hora_fin',
         'estado_id'
     ];
 

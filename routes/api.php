@@ -65,6 +65,7 @@ Route::middleware(['verify.domain', 'jwt'])->group(function () {
         Route::get('/', 'index')->name('ver-citas');
         Route::post('/', 'store')->name('crear-citas');
         Route::get('/mes-anio/consultar', 'citasPorMesAnio')->name('citas-mes-anio.select'); // Nueva ruta para buscar por mes y año
+        Route::post('/{id}/estado', 'actualizarEstado')->name('actualizar-estado-cita.select'); // Nueva ruta para actualizar estado
         Route::get('/{cita}', 'show')->name('ver-citas');
         Route::put('/{cita}', 'update')->name('editar-citas');
         Route::delete('/{cita}', 'destroy')->name('eliminar-citas'); // Ruta para eliminar
@@ -80,4 +81,3 @@ Route::middleware(['verify.domain', 'jwt'])->group(function () {
     Route::get('/estados', [EstadoCitaController::class, 'EstadoCita'])->name('estado-cita.select');
     Route::get('/especialidades', [EspecialidadController::class, 'getEspecialidad'])->name('especialidad.select');
 });
-
