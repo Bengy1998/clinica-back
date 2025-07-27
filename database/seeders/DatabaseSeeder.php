@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
         $this->call([
-            CitaEstadoSeeder::class,
+            //CitaEstadoSeeder::class,
             ClienteSeeder::class,
             DientesSeeder::class,
             EspecialidadesSeeder::class,
