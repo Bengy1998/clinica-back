@@ -19,11 +19,9 @@ class EspecialidadController extends Controller
     {
 
         try {
-            $citas = Especialidad::all();
+            $especialidad = Especialidad::all();
 
-            return $this->responseJson([
-                'data' => EspecialidadResource::collection($citas),
-            ]);
+            return $this->responseJson(EspecialidadResource::collection($especialidad));
         } catch (\Throwable $th) {
             return $this->responseErrorJson($th->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }

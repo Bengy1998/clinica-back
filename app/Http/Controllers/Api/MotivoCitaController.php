@@ -14,13 +14,11 @@ class MotivoCitaController extends Controller
     use ResponseTrait;
 
 
-    public function MotivoCita()
+    public function motivoCita()
     {
         try {
             $list_motivos_cita = MotivoCita::all();
-            return $this->responseJson([
-                'data' => MotivoCitaResource::collection($list_motivos_cita)
-            ]);
+            return $this->responseJson(MotivoCitaResource::collection($list_motivos_cita));
         } catch (\Throwable $th) {
             return $this->responseErrorJson($th->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }

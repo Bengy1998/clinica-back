@@ -78,3 +78,4 @@ class UserAuthControllerTest extends TestCase
             ]);
     }
 }
+//php artisan test --filter=UserAuthControllerTest

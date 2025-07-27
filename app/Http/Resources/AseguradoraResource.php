@@ -17,7 +17,7 @@ class AseguradoraResource extends JsonResource
 
         return [
             'id'         => $this->id ?? '',
-            'nombre'     => $this->nombres ?? '',
+            'nombre'     => $this->nombre ?? '',
             'correo'     => $this->correo ?? '',
             'ruc'        => $this->ruc ?? '',
             'telefono'   => $this->telefono ?? '',

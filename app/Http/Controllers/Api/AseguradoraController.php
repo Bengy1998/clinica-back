@@ -54,7 +54,6 @@ class AseguradoraController extends Controller
         }
     }
 
-
     public function update(AseguradoraUpdateRequest $request, Aseguradora $aseguradora)
     {
         try {
@@ -93,6 +92,18 @@ class AseguradoraController extends Controller
             return $this->responseJson(null, Response::HTTP_NO_CONTENT);
         } catch (\Throwable $th) {
             return $this->responseServerError($th->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function select(Request $request)
+    {
+        try {
+            $list_aseguradoras = Aseguradora::when($request->filled('search'), function ($query) use ($request) {
+                $query->where('nombre', 'like', '%' . $request->input('search') . '%');
+            })->limit(20)->get();
+            return $this->responseJson(AseguradoraResource::collection($list_aseguradoras));
+        } catch (\Throwable $th) {
+            return $this->responseErrorJson($th->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

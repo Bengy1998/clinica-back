@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CitaStoreRequest;
 use App\Http\Requests\CitaUpdateRequest;
+use App\Http\Resources\CitaCalendarioResource;
 use App\Http\Resources\CitaEstadoResource;
 use App\Http\Resources\CitaResource;
 use App\Models\Cita;
@@ -80,7 +81,6 @@ class CitaController extends Controller
     {
         try {
             $data = $request->only([
-                'nombre',
                 'paciente_id',
                 'aseguradora_id',
                 'especialidad_id',
@@ -88,7 +88,6 @@ class CitaController extends Controller
                 'fecha',
                 'hora',
                 'empresa_id',
-                'estado_id'
             ]);
 
             $cita = Cita::create($data);
@@ -148,4 +147,38 @@ class CitaController extends Controller
         }
     }
 
+    /**
+     * Obtener citas por mes y año
+     */
+    public function citasPorMesAnio(Request $request)
+    {
+        try {
+
+            $mes = $request->input('mes', now()->month);
+            $anio = $request->input('anio', now()->year);
+
+            $citas = Cita::with(['paciente', 'medico', 'especialidad', 'aseguradora', 'estado', 'motivo'])
+                ->whereYear('fecha', $anio)
+                ->whereMonth('fecha', $mes)
+                ->when($request->filled('empresa_id'), function ($query) use ($request) {
+                    $query->where('empresa_id', $request->input('empresa_id'));
+                })
+                ->when($request->filled('especialidad_id'), function ($query) use ($request) {
+                    $query->where('especialidad_id', $request->input('especialidad_id'));
+                })
+                ->when($request->filled('medico_id'), function ($query) use ($request) {
+                    $query->where('medico_id', $request->input('medico_id'));
+                })
+                ->when($request->filled('estado_id'), function ($query) use ($request) {
+                    $query->where('estado_id', $request->input('estado_id'));
+                })
+                ->orderBy('fecha', 'asc')
+                ->orderBy('hora', 'asc')
+                ->get();
+            
+            return $this->responseJson(CitaCalendarioResource::collection($citas));
+        } catch (\Throwable $th) {
+            return $this->responseErrorJson($th->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }

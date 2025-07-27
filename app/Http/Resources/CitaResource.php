@@ -16,7 +16,6 @@ class CitaResource extends JsonResource
     {
         return [
             'id'              => $this->id ?? '',
-            'nombre'          => $this->nombre ?? '',
             'paciente_id'     => $this->paciente_id ?? '',
             'aseguradora_id'  => $this->aseguradora_id ?? '',
             'nombre_aseguradora' => $this->aseguradora->nombre ?? '',

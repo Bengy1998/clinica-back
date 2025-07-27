@@ -150,4 +150,35 @@ class PacienteController extends Controller
             return $this->responseErrorJson($th->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    /**
+     * Búsqueda de pacientes para select
+     */
+    public function select(Request $request)
+    {
+        try {
+            $list_pacientes = Paciente::when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->input('search');
+                $query->where(function ($query) use ($search) {
+                    $query->whereRaw("CONCAT(nombres, ' ', apellido_paterno, ' ', apellido_materno) LIKE ?", ['%' . $search . '%'])
+                        ->orWhere('numero_documento_identidad', 'LIKE', '%' . $search . '%');
+                });
+            })->limit(20)->get();
+
+            // Formatear la respuesta para el select
+            $pacientes_formatted = $list_pacientes->map(function ($paciente) {
+                return [
+                    'id' => $paciente->id,
+                    'nombre_completo' => trim($paciente->nombres . ' ' . $paciente->apellido_paterno . ' ' . $paciente->apellido_materno),
+                    'numero_documento_identidad' => $paciente->numero_documento_identidad,
+                    'telefono' => $paciente->telefono,
+                    'email' => $paciente->email
+                ];
+            });
+
+            return $this->responseJson($pacientes_formatted);
+        } catch (\Throwable $th) {
+            return $this->responseErrorJson($th->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }

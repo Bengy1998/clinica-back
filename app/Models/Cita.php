@@ -7,6 +7,7 @@ use App\Models\Atencion;
 use App\Models\CitaEstado;
 use App\Models\Especialidad;
 use App\Models\Medico;
+use App\Models\Scopes\EmpresaScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -28,6 +29,18 @@ class Cita extends Model
         'hora',
         'estado_id'
     ];
+
+    /**
+     * Valores por defecto para los atributos del modelo
+     */
+    protected $attributes = [
+        'estado_id' => 1,
+    ];
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope(new EmpresaScope);
+    }
 
 
     public function especialidad()

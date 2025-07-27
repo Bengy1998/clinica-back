@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\CitaController;
 use App\Http\Controllers\Api\EmpresaController;
 use App\Http\Controllers\Api\EspecialidadController;
 use App\Http\Controllers\Api\EstadoCitaController;
+use App\Http\Controllers\Api\MedicoController;
 use App\Http\Controllers\Api\MotivoCitaController;
 use App\Http\Controllers\Api\PacienteController;
 use App\Http\Controllers\Api\TipoDocumentoIdentidadController;
@@ -43,6 +44,8 @@ Route::middleware(['verify.domain', 'jwt'])->group(function () {
         Route::get('/{aseguradora}', 'show')->name('ver-aseguradoras');
         Route::put('/{aseguradora}', 'update')->name('editar-aseguradoras');
         Route::delete('/{aseguradora}', 'destroy')->name('eliminar-aseguradoras'); // Ruta para eliminar
+        Route::get('/buscar/nombre', 'select')->name('buscar-aseguradoras.select'); // Ruta para buscar aseguradoras
+
     });
 
     Route::controller(PacienteController::class)->prefix('pacientes')->group(function () {
@@ -51,37 +54,30 @@ Route::middleware(['verify.domain', 'jwt'])->group(function () {
         Route::get('/{paciente}', 'show')->name('ver-pacientes');
         Route::put('/{paciente}', 'update')->name('editar-pacientes');
         Route::delete('/{paciente}', 'destroy')->name('eliminar-pacientes'); // Ruta para eliminar
+        Route::get('/buscar/nombre', 'select')->name('buscar-pacientes.select'); // Ruta para buscar pacientes
+    });
+
+    Route::controller(MedicoController::class)->prefix('medicos')->group(function () {
+        Route::get('/buscar/nombre', 'select')->name('buscar-medicos.select'); // Ruta para buscar médicos
     });
 
     Route::controller(CitaController::class)->prefix('citas')->group(function () {
         Route::get('/', 'index')->name('ver-citas');
         Route::post('/', 'store')->name('crear-citas');
+        Route::get('/mes-anio/consultar', 'citasPorMesAnio')->name('citas-mes-anio.select'); // Nueva ruta para buscar por mes y año
         Route::get('/{cita}', 'show')->name('ver-citas');
         Route::put('/{cita}', 'update')->name('editar-citas');
         Route::delete('/{cita}', 'destroy')->name('eliminar-citas'); // Ruta para eliminar
-
     });
 
     Route::controller(TipoDocumentoIdentidadController::class)->prefix('tipo-documento-identidad')->group(function () {
         Route::get('/', 'index')->name('tipo-documento-identidad.select');
     });
 
+
     // Ruta para obtener los motivos de cita fuera del grupo 'citas'
-    Route::get('/motivos', [CitaController::class, 'MotivoCita'])->name('motivo-cita');
-    Route::get('/estados', [CitaController::class, 'EstadoCita'])->name('estado-cita');
-
+    Route::get('/motivos', [MotivoCitaController::class, 'motivoCita'])->name('motivo-cita.select');
+    Route::get('/estados', [EstadoCitaController::class, 'EstadoCita'])->name('estado-cita.select');
+    Route::get('/especialidades', [EspecialidadController::class, 'getEspecialidad'])->name('especialidad.select');
 });
-// Ruta para obtener los motivos de cita fuera del grupo 'citas'
-Route::get('/motivos', [MotivoCitaController::class, 'MotivoCita'])->name('motivo-cita');
-Route::get('/estados', [EstadoCitaController::class, 'EstadoCita'])->name('estado-cita');
-Route::get('/tipoDocumento', [TipoDocumentoIdentidadController::class, 'TipoDocumento'])->name('tipo-documento');
-Route::get('/especialidades', [EspecialidadController::class, 'getEspecialidad'])->name('especialidad');
-Route::get('/motivos', [MotivoCitaController::class, 'MotivoCita'])->name('motivo-cita');
-Route::get('/estados', [EstadoCitaController::class, 'EstadoCita'])->name('estado-cita');
-Route::get('/tipoDocumento', [TipoDocumentoIdentidadController::class, 'TipoDocumento'])->name('tipo-documento');
-Route::get('/especialidades', [EspecialidadController::class, 'getEspecialidad'])->name('especialidad');
 
-
-Route::get('/x', function () {
-    return response()->json(['message' => 'bjar es mi mujer']);
-});
