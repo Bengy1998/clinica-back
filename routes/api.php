@@ -11,8 +11,6 @@ use App\Http\Controllers\Api\MotivoCitaController;
 use App\Http\Controllers\Api\PacienteController;
 use App\Http\Controllers\Api\TipoDocumentoIdentidadController;
 use App\Http\Controllers\Api\UserAuthController;
-use App\Models\Especialidad;
-use App\Models\TipoDocumentoIdentidad;
 use Illuminate\Support\Facades\Route;
 
 
@@ -60,8 +58,8 @@ Route::middleware(['verify.domain', 'jwt'])->group(function () {
         Route::post('/', 'store')->name('crear-pacientes');
         Route::get('/{paciente}', 'show')->name('ver-pacientes');
         Route::put('/{paciente}', 'update')->name('editar-pacientes');
-        Route::delete('/{paciente}', 'destroy')->name('eliminar-pacientes'); // Ruta para eliminar
-        Route::get('/buscar/nombre', 'select')->name('buscar-pacientes.select'); // Ruta para buscar pacientes
+        Route::delete('/{paciente}', 'destroy')->name('eliminar-pacientes');
+        Route::get('/buscar/nombre', 'select')->name('buscar-pacientes.select');
     });
 
     Route::controller(MedicoController::class)->prefix('medicos')->group(function () {
