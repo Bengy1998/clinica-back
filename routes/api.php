@@ -13,7 +13,6 @@ use App\Http\Controllers\Api\TipoDocumentoIdentidadController;
 use App\Http\Controllers\Api\UserAuthController;
 use Illuminate\Support\Facades\Route;
 
-
 // Asegurarse de que la ruta login no se vea afectada por middleware que intente parsear el token
 Route::middleware('verify.domain')->group(function () {
     Route::post('login', [UserAuthController::class, 'login']);
