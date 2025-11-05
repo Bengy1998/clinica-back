@@ -1,0 +1,30 @@
+# COMANDOS ÚTILES MYSQL
+# =====================
+
+## GESTIÓN DEL CONTENEDOR:
+docker-compose up -d          # Iniciar MySQL
+docker-compose down           # Parar MySQL
+docker-compose restart mysql  # Reiniciar MySQL
+docker-compose logs -f mysql  # Ver logs en vivo
+docker-compose ps             # Ver estado
+
+## ACCESO A MYSQL:
+mysql -h IP_DEL_SERVIDOR -u root -proot2025
+docker-compose exec mysql mysql -u root -proot2025
+
+## COMANDOS SQL BÁSICOS:
+SHOW DATABASES;
+USE clinica;
+SHOW TABLES;
+CREATE DATABASE nombre_db;
+DROP DATABASE nombre_db;
+
+## BACKUP Y RESTORE:
+# Backup
+docker-compose exec mysql mysqldump -u root -proot2025 clinica > backup.sql
+
+# Restore
+docker-compose exec -T mysql mysql -u root -proot2025 clinica < backup.sql
+
+## FIREWALL (si es necesario):
+sudo ufw allow 3306/tcp

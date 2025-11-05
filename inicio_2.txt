@@ -1,0 +1,19 @@
+# INICIAR MYSQL DESPUÉS DEL REINICIO
+# ===================================
+
+## COMANDOS:
+ssh usuario@IP_DEL_SERVIDOR
+cd /var/mysql
+docker-compose up -d
+
+## VERIFICAR:
+docker-compose ps
+docker-compose logs mysql
+
+## CONECTAR DESDE REMOTO:
+mysql -h IP_DEL_SERVIDOR -u root -proot2025
+
+## COMANDOS ÚTILES:
+docker-compose restart mysql
+docker-compose logs -f mysql
+docker-compose down
