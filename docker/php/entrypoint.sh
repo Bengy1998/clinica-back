@@ -12,56 +12,88 @@ until nc -z mysql 3306; do
 done
 echo "✅ MySQL is ready!"
 
-# Switch to root temporarily for setup commands that might need elevated permissions
-if [ "$(id -u)" != "0" ]; then
-    echo "Running as www-data user, switching to application directory..."
-    cd /var/www/html
-else
-    # If running as root, switch to www-data for application commands
-    echo "Running as root, will execute commands as www-data..."
-fi
+# Asegurar que estamos en el directorio correcto
+cd /var/www/html
 
-# Install Composer dependencies
-echo "📦 Installing Composer dependencies..."
-composer install --no-dev --optimize-autoloader --no-interaction
+# Configurar Git para evitar el warning de ownership
+echo "🔧 Configuring Git safe directory..."
+git config --global --add safe.directory /var/www/html || echo "Git config already set or not needed"
 
-# Clear Laravel caches and optimize
-echo "🧹 Clearing Laravel caches..."
-php artisan optimize:clear --quiet
-
-echo "🗂️ Clearing view cache..."
-php artisan view:clear --quiet
-
-# Generate application key if not exists
-if [ ! -f .env ]; then
-    echo "⚠️ .env file not found, copying from .env.example..."
-    cp .env.example .env
-fi
-
-# Check if APP_KEY is empty
-if ! grep -q "APP_KEY=.*[^[:space:]]" .env 2>/dev/null || grep -q "APP_KEY=$" .env 2>/dev/null; then
-    echo "🔑 Generating application key..."
-    php artisan key:generate --force --quiet
-else
-    echo "🔑 Application key already exists."
-fi
-
-# Create storage link
-echo "🔗 Creating storage symbolic link..."
-php artisan storage:link --quiet 2>/dev/null || echo "Storage link already exists or failed to create."
-
-# Set proper permissions (if running as root)
+# Configurar permisos apropiados
+echo "🔧 Setting up proper permissions..."
 if [ "$(id -u)" = "0" ]; then
-    echo "🔧 Setting proper permissions..."
-    chown -R www-data:www-data /var/www/html
-    chmod -R 775 storage bootstrap/cache
+    # Si ejecutamos como root, configurar permisos y luego cambiar a www-data
+    echo "Running as root, setting ownership..."
 
-    echo "👤 Switching to www-data user..."
-    # Alpine Linux doesn't have su-exec by default, using su instead
-    exec su www-data -s /bin/sh -c "exec $*"
+    # Asegurar que www-data sea el propietario
+    chown -R www-data:www-data /var/www/html
+
+    # Crear directorios necesarios con permisos correctos
+    mkdir -p storage/app/public storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache vendor
+    chown -R www-data:www-data storage bootstrap/cache vendor
+    chmod -R 775 storage bootstrap/cache
+    chmod -R 755 vendor
+
+    # Install Composer dependencies como www-data
+    echo "📦 Installing Composer dependencies as www-data..."
+    su www-data -s /bin/sh -c "composer install --no-dev --optimize-autoloader --no-interaction"
+else
+    # Si ya ejecutamos como www-data
+    echo "Running as www-data user..."
+
+    # Crear directorios necesarios
+    mkdir -p storage/app/public storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache vendor
+    chmod -R 775 storage bootstrap/cache 2>/dev/null || true
+
+    # Install Composer dependencies
+    echo "📦 Installing Composer dependencies..."
+    composer install --no-dev --optimize-autoloader --no-interaction
+fi
+
+# Función para ejecutar comandos Laravel según el usuario
+run_laravel_commands() {
+    echo "🧹 Clearing Laravel caches..."
+    php artisan optimize:clear --quiet 2>/dev/null || echo "Cache clear skipped (first run)"
+
+    echo "🗂️ Clearing view cache..."
+    php artisan view:clear --quiet 2>/dev/null || echo "View cache clear skipped"
+
+    # Generate application key if not exists
+    if [ ! -f .env ]; then
+        echo "⚠️ .env file not found, copying from .env.example..."
+        cp .env.example .env 2>/dev/null || echo ".env.example not found, skipping"
+    fi
+
+    # Check if APP_KEY is empty
+    if [ -f .env ] && (! grep -q "APP_KEY=.*[^[:space:]]" .env 2>/dev/null || grep -q "APP_KEY=$" .env 2>/dev/null); then
+        echo "🔑 Generating application key..."
+        php artisan key:generate --force --quiet
+    else
+        echo "🔑 Application key already exists or .env not ready."
+    fi
+
+    # Create storage link
+    echo "🔗 Creating storage symbolic link..."
+    php artisan storage:link --quiet 2>/dev/null || echo "Storage link already exists or skipped."
+}
+
+# Ejecutar comandos Laravel según el contexto
+if [ "$(id -u)" = "0" ]; then
+    echo "🎯 Running Laravel commands as www-data..."
+    su www-data -s /bin/sh -c "$(declare -f run_laravel_commands); run_laravel_commands"
+
+    echo "🔧 Final permissions setup..."
+    chown -R www-data:www-data /var/www/html
+    chmod -R 775 storage bootstrap/cache 2>/dev/null || true
+
+    echo "👤 Starting PHP-FPM as www-data..."
+    # Iniciar PHP-FPM
+    exec php-fpm
+else
+    run_laravel_commands
 fi
 
 echo "✅ Laravel application setup completed!"
 
-# Execute the main command
+# Execute the main command (PHP-FPM)
 exec "$@"

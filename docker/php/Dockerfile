@@ -49,11 +49,14 @@ RUN chmod -R 755 /var/www/html \
 COPY docker/php/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Switch to www-data user
-USER www-data
+# Create necessary directories with proper permissions
+RUN mkdir -p storage/app/public storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
 
+# Start as root to handle permissions, then switch to www-data
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["php-fpm"]
