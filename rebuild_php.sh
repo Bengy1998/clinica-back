@@ -21,7 +21,18 @@ docker-compose build --no-cache php
 echo "Iniciando contenedores..."
 docker-compose up -d
 
-# Verificar logs
-echo "Verificando logs de PHP..."
-sleep 5
+# Esperar y verificar
+echo "Esperando 10 segundos..."
+sleep 10
+
+echo "Estado de contenedores:"
+docker-compose ps
+
+echo ""
+echo "Logs de PHP (últimas 20 líneas):"
+docker-compose logs --tail=20 php
+
+echo ""
+echo "¿Todo funcionó? Presiona Ctrl+C para salir o Enter para ver logs en vivo..."
+read -r
 docker-compose logs -f php
