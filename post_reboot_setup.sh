@@ -51,15 +51,33 @@ if ! docker ps &> /dev/null; then
     exit 1
 fi
 
-print_step "Verificando contenedores existentes..."
-if docker-compose ps | grep -q "Up"; then
-    print_step "Los contenedores ya están funcionando, reiniciando para asegurar estado limpio..."
+print_step "Verificando y limpiando contenedores existentes..."
+
+# Verificar si hay contenedores en mal estado
+if docker-compose ps | grep -E "(Restarting|Exit)"; then
+    print_warning "Detectados contenedores en mal estado, limpiando..."
+    docker-compose down --remove-orphans
+    docker system prune -f
+    sleep 5
+elif docker-compose ps | grep -q "Up"; then
+    print_step "Los contenedores están funcionando, reiniciando para asegurar estado limpio..."
     docker-compose down
     sleep 5
 fi
 
+print_step "Verificando archivo .env..."
+if [ ! -f ".env" ]; then
+    print_error "Archivo .env no encontrado"
+    exit 1
+fi
+
 print_step "Construyendo e iniciando contenedores..."
-docker-compose up -d --build
+if ! docker-compose up -d --build; then
+    print_error "Error al construir/iniciar contenedores"
+    print_step "Logs de construcción:"
+    docker-compose logs
+    exit 1
+fi
 
 print_step "Esperando que todos los servicios estén listos..."
 echo "Esperando 45 segundos para que todos los servicios inicien completamente..."
@@ -89,23 +107,113 @@ if ! docker-compose ps | grep -q "Up"; then
     exit 1
 fi
 
-print_step "Esperando que PHP-FPM esté completamente listo..."
-sleep 10
+print_step "Esperando que PHP-FPM esté completamente listo y estable..."
+
+# Función para verificar si el contenedor PHP está estable
+wait_for_php_container() {
+    local max_attempts=12
+    local attempt=1
+
+    while [ $attempt -le $max_attempts ]; do
+        echo "Verificando estabilidad del contenedor PHP... (intento $attempt/$max_attempts)"
+
+        # Verificar que el contenedor esté ejecutándose y no reiniciándose
+        local php_status=$(docker-compose ps php | grep -v "Name" | awk '{print $4}')
+
+        if [[ "$php_status" == "Up" ]]; then
+            # Intentar un comando simple para verificar que PHP responde
+            if docker-compose exec -T php php --version >/dev/null 2>&1; then
+                print_step "✅ Contenedor PHP estable después de $((attempt * 10)) segundos"
+                return 0
+            fi
+        fi
+
+        if [[ "$php_status" == *"Restarting"* ]]; then
+            print_warning "Contenedor PHP reiniciándose, esperando..."
+        fi
+
+        sleep 10
+        ((attempt++))
+    done
+
+    print_error "El contenedor PHP no se estabilizó después de $((max_attempts * 10)) segundos"
+    print_step "Estado actual de contenedores:"
+    docker-compose ps
+    print_step "Logs del contenedor PHP:"
+    docker-compose logs --tail=30 php
+    return 1
+}
+
+# Esperar que PHP esté estable
+if ! wait_for_php_container; then
+    print_error "No se pudo estabilizar el contenedor PHP, intentando solución drástica..."
+
+    print_step "Parando todos los contenedores..."
+    docker-compose down --remove-orphans
+
+    print_step "Eliminando contenedor PHP problemático..."
+    docker container prune -f
+
+    print_step "Construyendo solo el contenedor PHP..."
+    docker-compose build --no-cache php
+
+    print_step "Iniciando contenedores uno por uno..."
+    docker-compose up -d mysql
+    sleep 15
+
+    print_step "Verificando que MySQL esté funcionando..."
+    if ! docker-compose exec -T mysql mysqladmin ping -h localhost -u root -proot2025; then
+        print_error "MySQL no responde, verificando logs..."
+        docker-compose logs mysql
+        exit 1
+    fi
+
+    print_step "Iniciando nginx y php..."
+    docker-compose up -d
+
+    print_step "Esperando nueva estabilización..."
+    sleep 20
+
+    # Verificar una vez más
+    if ! wait_for_php_container; then
+        print_error "El contenedor PHP sigue fallando después de reconstrucción"
+        print_step "Logs detallados del contenedor PHP:"
+        docker-compose logs php
+        print_step "Entrando en modo diagnóstico manual..."
+        print_step "Ejecuta manualmente: docker-compose logs php"
+        print_step "Y luego: docker-compose exec php sh"
+        exit 1
+    fi
+fi
 
 print_step "Generando clave de aplicación..."
 if ! docker-compose exec -T php php artisan key:generate --force; then
     print_error "Error generando clave de aplicación"
-    print_step "Intentando de nuevo en 10 segundos..."
-    sleep 10
-    docker-compose exec -T php php artisan key:generate --force
+    print_step "Verificando logs de PHP para diagnosticar el problema:"
+    docker-compose logs --tail=20 php
+    exit 1
 fi
 
 print_step "Ejecutando migraciones..."
 if ! docker-compose exec -T php php artisan migrate --force; then
     print_error "Error en migraciones, verificando base de datos..."
-    docker-compose exec -T mysql mysql -u root -proot2025 -e "SHOW DATABASES;"
-    print_step "Reintentando migraciones..."
-    docker-compose exec -T php php artisan migrate --force
+
+    # Verificar que MySQL esté accesible
+    if docker-compose exec -T mysql mysql -u root -proot2025 -e "SHOW DATABASES;" >/dev/null 2>&1; then
+        print_step "Base de datos accesible, verificando configuración Laravel..."
+        docker-compose exec -T php php artisan config:clear
+        print_step "Reintentando migraciones..."
+        if ! docker-compose exec -T php php artisan migrate --force; then
+            print_error "Las migraciones fallaron definitivamente"
+            print_step "Logs del contenedor PHP:"
+            docker-compose logs --tail=20 php
+            exit 1
+        fi
+    else
+        print_error "No se puede conectar a MySQL"
+        docker-compose logs --tail=20 mysql
+        exit 1
+    fi
 fi
 
 print_step "Creando enlace de almacenamiento..."
