@@ -80,7 +80,7 @@ cd /var/www
 
 # Solicitar URL del repositorio
 echo ""
-read -p "Ingresa la URL del repositorio Git (ejemplo: https://github.com/usuario/clinica-back.git): " REPO_URL
+read -p "Ingresa la URL del repositorio Git (ejemplo: git@github.com:Bengy1998/clinica-back.git): " REPO_URL
 
 if [[ -z "$REPO_URL" ]]; then
     print_error "URL del repositorio es requerida"
@@ -145,22 +145,14 @@ fi
 
 print_step "IMPORTANTE: Se requiere reiniciar para aplicar cambios de Docker"
 print_warning "El servidor se reiniciará en 10 segundos. Presiona Ctrl+C para cancelar."
-sleep 10
-
-sudo reboot
-
-# NOTA: El script continúa después del reinicio necesitaría ser ejecutado de nuevo
-# o dividirse en dos partes. Por simplicidad, se detiene aquí.
 
 echo ""
 echo "🔄 DESPUÉS DEL REINICIO, EJECUTA:"
 echo "=================================="
 echo "cd /var/www/clinica"
-echo "docker-compose up -d --build"
-echo "sleep 30"
-echo "docker-compose exec php php artisan key:generate --force"
-echo "docker-compose exec php php artisan migrate --force"
-echo "docker-compose exec php php artisan storage:link"
-echo "docker-compose exec php composer install --optimize-autoloader --no-dev"
+echo "chmod +x post_reboot_setup.sh"
+echo "./post_reboot_setup.sh"
 echo ""
-echo "Para automatizar esto, ejecuta: ./post_reboot_setup.sh"
+
+sleep 10
+sudo reboot

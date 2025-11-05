@@ -51,41 +51,77 @@ if ! docker ps &> /dev/null; then
     exit 1
 fi
 
+print_step "Verificando contenedores existentes..."
+if docker-compose ps | grep -q "Up"; then
+    print_step "Los contenedores ya están funcionando, reiniciando para asegurar estado limpio..."
+    docker-compose down
+    sleep 5
+fi
+
 print_step "Construyendo e iniciando contenedores..."
 docker-compose up -d --build
 
-print_step "Esperando que MySQL esté listo..."
-echo "Esperando 30 segundos para que MySQL inicie completamente..."
-sleep 30
+print_step "Esperando que todos los servicios estén listos..."
+echo "Esperando 45 segundos para que todos los servicios inicien completamente..."
+
+# Espera inteligente - verificar cada 5 segundos
+for i in {1..9}; do
+    echo "Verificando servicios... ($((i*5))/45 segundos)"
+    sleep 5
+
+    # Verificar si MySQL responde
+    if docker-compose exec -T mysql mysqladmin ping -h localhost -u root -proot2025 &>/dev/null; then
+        print_step "✅ MySQL está listo después de $((i*5)) segundos"
+        break
+    fi
+
+    if [ $i -eq 9 ]; then
+        print_warning "MySQL tardó más de 45 segundos, continuando..."
+    fi
+done
 
 # Verificar que los contenedores estén funcionando
 print_step "Verificando estado de contenedores..."
 if ! docker-compose ps | grep -q "Up"; then
     print_error "Los contenedores no se iniciaron correctamente"
-    docker-compose logs
+    print_step "Logs de contenedores:"
+    docker-compose logs --tail=20
     exit 1
 fi
 
+print_step "Esperando que PHP-FPM esté completamente listo..."
+sleep 10
+
 print_step "Generando clave de aplicación..."
-docker-compose exec php php artisan key:generate --force
+if ! docker-compose exec -T php php artisan key:generate --force; then
+    print_error "Error generando clave de aplicación"
+    print_step "Intentando de nuevo en 10 segundos..."
+    sleep 10
+    docker-compose exec -T php php artisan key:generate --force
+fi
 
 print_step "Ejecutando migraciones..."
-docker-compose exec php php artisan migrate --force
+if ! docker-compose exec -T php php artisan migrate --force; then
+    print_error "Error en migraciones, verificando base de datos..."
+    docker-compose exec -T mysql mysql -u root -proot2025 -e "SHOW DATABASES;"
+    print_step "Reintentando migraciones..."
+    docker-compose exec -T php php artisan migrate --force
+fi
 
 print_step "Creando enlace de almacenamiento..."
-docker-compose exec php php artisan storage:link
+docker-compose exec -T php php artisan storage:link
 
 print_step "Instalando dependencias de producción..."
-docker-compose exec php composer install --optimize-autoloader --no-dev --no-interaction
+docker-compose exec -T php composer install --optimize-autoloader --no-dev --no-interaction
 
 print_step "Optimizando aplicación para producción..."
-docker-compose exec php php artisan config:cache
-docker-compose exec php php artisan route:cache
-docker-compose exec php php artisan view:cache
+docker-compose exec -T php php artisan config:cache
+docker-compose exec -T php php artisan route:cache
+docker-compose exec -T php php artisan view:cache
 
 print_step "Configurando permisos finales..."
-docker-compose exec php chmod -R 755 /var/www/html
-docker-compose exec php chmod -R 775 storage bootstrap/cache
+docker-compose exec -T php chmod -R 755 /var/www/html
+docker-compose exec -T php chmod -R 775 storage bootstrap/cache
 
 print_step "Verificando funcionamiento..."
 sleep 5
