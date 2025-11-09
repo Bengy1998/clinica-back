@@ -3,17 +3,47 @@
 
 ## COMANDOS:
 ssh usuario@IP_DEL_SERVIDOR
-cd /var/mysql
-docker-compose up -d
+cd /var/www/clinica-back
+
+# Verificar archivos necesarios:
+ls -la docker-compose.yml mysql.cnf
+
+# Si faltan archivos, actualizar repositorio:
+git pull origin master
+
+# Si sigue sin funcionar, verificar contenido:
+cat docker-compose.yml
+
+docker compose up -d
 
 ## VERIFICAR:
-docker-compose ps
-docker-compose logs mysql
+docker compose ps
+docker compose logs mysql
 
-## CONECTAR DESDE REMOTO:
+## CONECTAR A MYSQL:
+
+# Desde el mismo servidor (local):
+docker compose exec mysql mysql -u root -proot2025
+# O también:
+mysql -h localhost -u root -proot2025
+
+# Desde otra máquina (remoto):
 mysql -h IP_DEL_SERVIDOR -u root -proot2025
 
 ## COMANDOS ÚTILES:
-docker-compose restart mysql
-docker-compose logs -f mysql
-docker-compose down
+docker compose restart mysql
+docker compose logs -f mysql
+docker compose down
+
+## TROUBLESHOOTING:
+# Si error "no configuration file provided":
+git status
+git pull origin master
+ls -la docker-compose.yml
+
+# Si mysql.cnf no existe:
+cat > mysql.cnf << EOF
+[mysqld]
+bind-address = 0.0.0.0
+default-authentication-plugin = mysql_native_password
+EOF

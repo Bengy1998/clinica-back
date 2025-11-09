@@ -1,0 +1,27 @@
+# DOCKER COMPOSE - CONFIGURACIÓN ESTÁNDAR
+# ========================================
+# Este archivo SÍ se versiona en Git para garantizar consistencia
+# Para personalizaciones locales usar: docker-compose.override.yml
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_server
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root2025
+      MYSQL_DATABASE: clinica
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql.cnf:/etc/mysql/conf.d/mysql.cnf
+    networks:
+      - mysql_network
+
+volumes:
+  mysql_data:
+
+networks:
+  mysql_network:
+    driver: bridge

@@ -10,34 +10,18 @@ sudo apt update
 sudo apt install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
 sudo usermod -aG docker $USER
 
-## CREAR docker-compose.yml:
-mkdir -p /var/mysql
-cd /var/mysql
+## VERIFICAR INSTALACIÓN:
+# Después del reinicio, verificar con:
+# docker --version
+# docker compose version
+# Si 'docker compose' no funciona, usar: sudo apt install docker-compose
 
-cat > docker-compose.yml << EOF
-services:
-  mysql:
-    image: mysql:8.0
-    container_name: mysql_server
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: root2025
-      MYSQL_DATABASE: clinica
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./mysql.cnf:/etc/mysql/conf.d/mysql.cnf
-    networks:
-      - mysql_network
-
-volumes:
-  mysql_data:
-
-networks:
-  mysql_network:
-    driver: bridge
-EOF
+## CLONAR PROYECTO:
+sudo mkdir -p /var/www
+cd /var/www
+sudo git clone https://github.com/Bengy1998/clinica-back.git clinica-back
+cd clinica-back
+sudo chown -R $USER:$USER /var/www/clinica-back
 
 ## CONFIGURAR ACCESO REMOTO:
 cat > mysql.cnf << EOF
