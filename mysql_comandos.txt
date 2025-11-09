@@ -12,11 +12,31 @@ docker compose ps             # Ver estado
 
 # CONEXIÓN LOCAL (desde el servidor):
 docker compose exec mysql mysql -u root -proot2025
-mysql -h localhost -u root -proot2025
-mysql -h 127.0.0.1 -u root -proot2025
+
+# NOTA: Estos NO funcionan sin MySQL instalado en host:
+# mysql -h localhost -u root -proot2025  ❌
+# mysql -h 127.0.0.1 -u root -proot2025  ❌
 
 # CONEXIÓN REMOTA (desde otra máquina):
 mysql -h IP_DEL_SERVIDOR -u root -proot2025
+
+## CONEXIÓN DESDE LARAVEL/APLICACIONES:
+
+# Configuración .env para Laravel:
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1  # Usar IP en lugar de localhost (evita socket Unix)
+DB_PORT=3306
+DB_DATABASE=clinica
+DB_USERNAME=root
+DB_PASSWORD=root2025
+
+# PROBLEMA: localhost intenta socket Unix, usar 127.0.0.1 para TCP
+
+# Verificar conexión Laravel:
+# En el servidor donde está Laravel, probar:
+curl -X POST http://localhost/api/test-db
+# O usar artisan:
+# php artisan migrate:status
 
 ## COMANDOS SQL BÁSICOS:
 SHOW DATABASES;
@@ -30,5 +50,63 @@ DROP DATABASE nombre_db;
 docker compose exec mysql mysqldump -u root -proot2025 clinica > backup.sql
 
 # Restore
-docker compose exec -T mysql mysql -u root -proot2025 clinica < backup.sql## FIREWALL (si es necesario):
+docker compose exec -T mysql mysql -u root -proot2025 clinica < backup.sql## PROBAR CONEXIÓN DESDE PHP/LARAVEL:
+
+# Crear archivo test-db.php para probar:
+cat > test-db.php << 'EOF'
+<?php
+try {
+    $pdo = new PDO('mysql:host=127.0.0.1;port=3306;dbname=clinica', 'root', 'root2025');
+    echo "✅ Conexión exitosa a MySQL\n";
+    echo "Versión: " . $pdo->query('SELECT VERSION()')->fetchColumn() . "\n";
+} catch (PDOException $e) {
+    echo "❌ Error: " . $e->getMessage() . "\n";
+}
+?>
+EOF
+
+# Ejecutar test:
+php test-db.php
+
+## TROUBLESHOOTING LARAVEL:
+
+# Error "No such file or directory":
+# Cambiar en .env: DB_HOST=127.0.0.1
+
+# Error "Access denied for user 'root'@'172.19.0.X'":
+# Paso 1: Conectar a MySQL
+docker compose exec mysql mysql -u root -proot2025
+
+# Paso 2: Diagnosticar usuarios existentes
+SELECT User, Host FROM mysql.user WHERE User='root';
+
+# Paso 3: Crear/actualizar permisos para root
+CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY 'root2025';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+UPDATE mysql.user SET authentication_string=PASSWORD('root2025') WHERE User='root' AND Host='%';
+FLUSH PRIVILEGES;
+
+# Paso 4: Verificar permisos
+SHOW GRANTS FOR 'root'@'%';
+EXIT;
+
+# Verificar que MySQL esté corriendo:
+docker compose ps
+netstat -tulpn | grep 3306
+
+# Paso 5: Limpiar cache de Laravel:
+php artisan config:clear
+php artisan config:cache
+php artisan migrate:status
+
+## SCRIPT AUTOMÁTICO PARA PERMISOS:
+# Ejecutar todo de una vez:
+docker compose exec mysql mysql -u root -proot2025 -e "
+CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY 'root2025';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+SELECT User, Host FROM mysql.user WHERE User='root';
+"
+
+## FIREWALL (si es necesario):
 sudo ufw allow 3306/tcp
